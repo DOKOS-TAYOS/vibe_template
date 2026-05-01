@@ -1,0 +1,6 @@
+Bootstrap required before publishing this project.
+
+Selected license: LICENSE_ID_PENDING
+Author: AUTHOR_NAME_PENDING
+
+Run `python -m project_name.cli bootstrap` to replace this placeholder with the chosen license text.
