@@ -18,6 +18,7 @@ All notable changes to this template are documented in this file.
 - Bootstrap now re-syncs the editable install after renaming the package, so the new project state is immediately usable.
 - Bootstrap now refuses to run again once the template has already been configured, including dry-run calls.
 - Bootstrap no longer rewrites unrelated `MIT` text while changing the project license, which keeps `THIRD_PARTY_LICENSES` stable for a public MIT template.
+- Bootstrap no longer rewrites its own internal `bootstrap_required` replacement rules after the first project bootstrap, which keeps fresh-copy smoke validation working on already-bootstrapped copies.
 - The license inventory now excludes the local template package and no longer ships `example.invalid` placeholder URLs.
 - The wrapper launcher now reads the current package name from `pyproject.toml`, so `bin/bootstrap`, `bin/quality`, and `bin/clean` still work after the template package is renamed.
 - Non-interactive bootstrap now derives `package_name` from `distribution_name` automatically, and the exported template metadata flips `bootstrap_required` to `False` after bootstrap.

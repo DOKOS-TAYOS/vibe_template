@@ -189,8 +189,14 @@ def _build_replacements(state: TemplateState, answers: BootstrapAnswers) -> list
         (state.package_name, answers.package_name),
         (state.initial_version, answers.initial_version),
         (state.project_scope, answers.project_scope),
-        ("bootstrap_required = true", "bootstrap_required = false"),
-        ("bootstrap_required=True", "bootstrap_required=False"),
+        (
+            _bootstrap_required_assignment(value=True),
+            _bootstrap_required_assignment(value=False),
+        ),
+        (
+            _bootstrap_required_metadata_value(value=True),
+            _bootstrap_required_metadata_value(value=False),
+        ),
     ]
 
 
@@ -225,6 +231,16 @@ def _replace_text(content: str, replacements: list[tuple[str, str]]) -> str:
     for old_value, new_value in replacements:
         updated_content = updated_content.replace(old_value, new_value)
     return updated_content
+
+
+def _bootstrap_required_assignment(value: bool) -> str:
+    bool_value = "true" if value else "false"
+    return f"bootstrap_required = {bool_value}"
+
+
+def _bootstrap_required_metadata_value(value: bool) -> str:
+    bool_value = "True" if value else "False"
+    return f"bootstrap_required={bool_value}"
 
 
 def _updated_text_content(

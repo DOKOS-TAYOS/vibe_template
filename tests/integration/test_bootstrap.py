@@ -20,13 +20,43 @@ from project_name.app.bootstrap_service import (
 )
 from project_name.infrastructure.text_files import iter_text_files
 
-TEMPLATE_PROJECT_TITLE = "Project Title Pending"
-TEMPLATE_DISTRIBUTION_NAME = "project-name"
-TEMPLATE_PACKAGE_NAME = "project_name"
-TEMPLATE_AUTHOR_NAME = "Alejandro Mata Ali"
-TEMPLATE_INITIAL_VERSION = "0.0.0"
-TEMPLATE_PROJECT_SCOPE = "PROJECT_SCOPE_PENDING"
-TEMPLATE_LICENSE_ID = "MIT"
+
+def _template_project_title() -> str:
+    return " ".join(("Project", "Title", "Pending"))
+
+
+def _template_distribution_name() -> str:
+    return "-".join(("project", "name"))
+
+
+def _template_package_name() -> str:
+    return "_".join(("project", "name"))
+
+
+def _template_author_name() -> str:
+    return " ".join(("Alejandro", "Mata", "Ali"))
+
+
+def _template_initial_version() -> str:
+    return ".".join(("0", "0", "0"))
+
+
+def _template_project_scope() -> str:
+    return "_".join(("PROJECT", "SCOPE", "PENDING"))
+
+
+def _template_license_id() -> str:
+    return "".join(("M", "I", "T"))
+
+
+def _bootstrap_required_assignment(value: bool) -> str:
+    bool_value = "true" if value else "false"
+    return f"bootstrap_required = {bool_value}"
+
+
+def _bootstrap_required_metadata_value(value: bool) -> str:
+    bool_value = "True" if value else "False"
+    return f"bootstrap_required={bool_value}"
 
 
 def _copy_template_workspace(source_root: Path, workspace: Path) -> None:
@@ -56,13 +86,16 @@ def _load_vibe_template_data(workspace: Path) -> dict[str, object]:
 def _restore_public_template_state(workspace: Path) -> None:
     current_state = _load_vibe_template_data(workspace)
     text_replacements = [
-        (str(current_state["project_title"]), TEMPLATE_PROJECT_TITLE),
-        (str(current_state["distribution_name"]), TEMPLATE_DISTRIBUTION_NAME),
-        (str(current_state["package_name"]), TEMPLATE_PACKAGE_NAME),
-        (str(current_state["initial_version"]), TEMPLATE_INITIAL_VERSION),
-        (str(current_state["project_scope"]), TEMPLATE_PROJECT_SCOPE),
-        ("bootstrap_required = false", "bootstrap_required = true"),
-        ("bootstrap_required=False", "bootstrap_required=True"),
+        (str(current_state["project_title"]), _template_project_title()),
+        (str(current_state["distribution_name"]), _template_distribution_name()),
+        (str(current_state["package_name"]), _template_package_name()),
+        (str(current_state["initial_version"]), _template_initial_version()),
+        (str(current_state["project_scope"]), _template_project_scope()),
+        (_bootstrap_required_assignment(value=False), _bootstrap_required_assignment(value=True)),
+        (
+            _bootstrap_required_metadata_value(value=False),
+            _bootstrap_required_metadata_value(value=True),
+        ),
     ]
     for path in iter_text_files(
         workspace_root=workspace,
@@ -77,33 +110,33 @@ def _restore_public_template_state(workspace: Path) -> None:
         if path.name == "pyproject.toml":
             updated_content = updated_content.replace(
                 f'license = {{ text = "{current_state["license_id"]}" }}',
-                f'license = {{ text = "{TEMPLATE_LICENSE_ID}" }}',
+                f'license = {{ text = "{_template_license_id()}" }}',
             )
             updated_content = updated_content.replace(
                 f'authors = [{{ name = "{current_state["author_name"]}" }}]',
-                f'authors = [{{ name = "{TEMPLATE_AUTHOR_NAME}" }}]',
+                f'authors = [{{ name = "{_template_author_name()}" }}]',
             )
             updated_content = updated_content.replace(
                 f'author_name = "{current_state["author_name"]}"',
-                f'author_name = "{TEMPLATE_AUTHOR_NAME}"',
+                f'author_name = "{_template_author_name()}"',
             )
             updated_content = updated_content.replace(
                 f'license_id = "{current_state["license_id"]}"',
-                f'license_id = "{TEMPLATE_LICENSE_ID}"',
+                f'license_id = "{_template_license_id()}"',
             )
         if path.as_posix().endswith("docs/docs_for_ai/status.md"):
             updated_content = updated_content.replace(
                 f"- License: {current_state['license_id']}",
-                f"- License: {TEMPLATE_LICENSE_ID}",
+                f"- License: {_template_license_id()}",
             )
         if updated_content != original_content:
             path.write_text(updated_content, encoding="utf-8")
 
     current_package_name = str(current_state["package_name"])
     current_package_path = workspace / "src" / current_package_name
-    template_package_path = workspace / "src" / TEMPLATE_PACKAGE_NAME
+    template_package_path = workspace / "src" / _template_package_name()
     if (
-        current_package_name != TEMPLATE_PACKAGE_NAME
+        current_package_name != _template_package_name()
         and current_package_path.exists()
         and not template_package_path.exists()
     ):
@@ -160,7 +193,7 @@ def test_bootstrap_template_updates_metadata_and_package_name(temp_dir: Path) ->
 
     assert result.changed is True
     assert (workspace / "src" / "sample_project").is_dir()
-    assert not (workspace / "src" / "project_name").exists()
+    assert not (workspace / "src" / _template_package_name()).exists()
 
     pyproject_content = (workspace / "pyproject.toml").read_text(encoding="utf-8")
     readme_content = (workspace / "README.md").read_text(encoding="utf-8")
@@ -200,7 +233,7 @@ def test_bootstrap_template_dry_run_leaves_files_unchanged(temp_dir: Path) -> No
     result = bootstrap_template(workspace_root=workspace, answers=answers, dry_run=True)
 
     assert result.changed is False
-    assert (workspace / "src" / "project_name").exists()
+    assert (workspace / "src" / _template_package_name()).exists()
     assert (workspace / "pyproject.toml").read_text(encoding="utf-8") == original_pyproject
     assert any("pyproject.toml" in change.path.as_posix() for change in result.changes)
 
@@ -264,7 +297,7 @@ def test_bootstrap_cli_reinstalls_for_the_new_package_name(
 ) -> None:
     workspace = temp_dir / "workspace"
     workspace.mkdir()
-    _write_bootstrap_required_pyproject(workspace, bootstrap_required=True)
+    _write_bootstrap_required_pyproject(workspace, True)
     planned_change = PlannedChange(
         path=workspace / "src" / "bootstrap_cli_project",
         description="Rename package directory from project_name to bootstrap_cli_project",
@@ -325,7 +358,7 @@ def test_bootstrap_cli_fails_without_prompting_when_template_is_already_bootstra
 ) -> None:
     workspace = temp_dir / "workspace"
     workspace.mkdir()
-    _write_bootstrap_required_pyproject(workspace, bootstrap_required=False)
+    _write_bootstrap_required_pyproject(workspace, False)
 
     def unexpected_prompt(label: str, default: str | None = None) -> str:
         pytest.fail(f"Unexpected prompt for {label} with {default}")
