@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import keyword
 import re
 import tomllib
@@ -37,7 +38,6 @@ TEXT_FILE_NAMES: tuple[str, ...] = (
     ".editorconfig",
     ".gitattributes",
     "LICENSE",
-    "THIRD_PARTY_LICENSES",
     "CONTRIBUTING",
     "CONTRIBUTING.md",
 )
@@ -48,6 +48,10 @@ SKIP_DIRECTORIES: tuple[str, ...] = (
     ".pytest_cache",
     ".ruff_cache",
     ".mypy_cache",
+)
+PYTHON_LINE_LENGTH = 100
+_TEMPLATE_METADATA_SCOPE_SUMMARY_PATTERN = re.compile(
+    r"(?ms)^(?P<indent>\s*)scope_summary=.*?,(?=\n(?P=indent)cli_commands=)"
 )
 
 
@@ -233,6 +237,66 @@ def _replace_text(content: str, replacements: list[tuple[str, str]]) -> str:
     return updated_content
 
 
+def _is_template_metadata_file(path: Path) -> bool:
+    return path.as_posix().endswith("domain/template_metadata.py")
+
+
+def _rewrite_template_metadata_scope_summary(content: str, scope_summary: str) -> str:
+    def replace_scope_summary(match: re.Match[str]) -> str:
+        indent = match.group("indent")
+        return _format_scope_summary_assignment(scope_summary=scope_summary, indent=indent)
+
+    updated_content, _ = _TEMPLATE_METADATA_SCOPE_SUMMARY_PATTERN.subn(
+        replace_scope_summary,
+        content,
+        count=1,
+    )
+    return updated_content
+
+
+def _format_scope_summary_assignment(scope_summary: str, indent: str) -> str:
+    single_line_assignment = f"{indent}scope_summary={json.dumps(scope_summary)},"
+    if len(single_line_assignment) <= PYTHON_LINE_LENGTH:
+        return single_line_assignment
+
+    value_indent = f"{indent}    "
+    max_literal_width = PYTHON_LINE_LENGTH - len(value_indent)
+    wrapped_segments = _wrap_python_string_literal(
+        value=scope_summary,
+        max_literal_width=max_literal_width,
+    )
+    wrapped_literals = "\n".join(
+        f"{value_indent}{json.dumps(segment)}" for segment in wrapped_segments
+    )
+    return f"{indent}scope_summary=(\n{wrapped_literals}\n{indent}),"
+
+
+def _wrap_python_string_literal(value: str, max_literal_width: int) -> list[str]:
+    wrapped_segments: list[str] = []
+    start_index = 0
+
+    while start_index < len(value):
+        best_end_index = start_index
+        preferred_end_index = start_index
+
+        for end_index in range(start_index + 1, len(value) + 1):
+            candidate = value[start_index:end_index]
+            if len(json.dumps(candidate)) > max_literal_width:
+                break
+            best_end_index = end_index
+            if candidate[-1].isspace():
+                preferred_end_index = end_index
+
+        if best_end_index == start_index:
+            best_end_index = start_index + 1
+
+        split_index = preferred_end_index if preferred_end_index > start_index else best_end_index
+        wrapped_segments.append(value[start_index:split_index])
+        start_index = split_index
+
+    return wrapped_segments
+
+
 def _bootstrap_required_assignment(value: bool) -> str:
     bool_value = "true" if value else "false"
     return f"bootstrap_required = {bool_value}"
@@ -251,6 +315,11 @@ def _updated_text_content(
     answers: BootstrapAnswers,
 ) -> str:
     updated_content = _replace_text(content, replacements)
+    if _is_template_metadata_file(path):
+        updated_content = _rewrite_template_metadata_scope_summary(
+            updated_content,
+            answers.project_scope,
+        )
     if path.name == "pyproject.toml":
         updated_content = _replace_text(
             updated_content,
