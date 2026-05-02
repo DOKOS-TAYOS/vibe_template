@@ -20,6 +20,8 @@ This template is intentionally incomplete until bootstrap fills in:
 
 Bootstrap is a one-time step for a fresh copy of the template. After it finishes, treat the repository as the real project codebase and keep using the stable wrappers when you want the safest entrypoint.
 
+This template repository itself is published under MIT. Bootstrap can keep that choice or replace it for the project you create from the template.
+
 ## Why the Wrappers Stay Useful
 
 Before bootstrap, the placeholder package is still called `project_name`. After bootstrap, the package name changes. The wrappers in `bin/` stay stable across that rename and prefer the local `.venv` interpreter when it exists.

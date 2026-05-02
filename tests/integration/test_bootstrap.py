@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import shutil
+import tomllib
 from pathlib import Path
 from subprocess import CompletedProcess
 
@@ -9,11 +10,23 @@ import pytest
 
 import project_name.cli as cli_module
 from project_name.app.bootstrap_service import (
+    SKIP_DIRECTORIES,
+    TEXT_FILE_NAMES,
+    TEXT_FILE_SUFFIXES,
     BootstrapAnswers,
     BootstrapResult,
     PlannedChange,
     bootstrap_template,
 )
+from project_name.infrastructure.text_files import iter_text_files
+
+TEMPLATE_PROJECT_TITLE = "Project Title Pending"
+TEMPLATE_DISTRIBUTION_NAME = "project-name"
+TEMPLATE_PACKAGE_NAME = "project_name"
+TEMPLATE_AUTHOR_NAME = "Alejandro Mata Ali"
+TEMPLATE_INITIAL_VERSION = "0.0.0"
+TEMPLATE_PROJECT_SCOPE = "PROJECT_SCOPE_PENDING"
+TEMPLATE_LICENSE_ID = "MIT"
 
 
 def _copy_template_workspace(source_root: Path, workspace: Path) -> None:
@@ -30,6 +43,101 @@ def _copy_template_workspace(source_root: Path, workspace: Path) -> None:
             "test-artifacts",
             "pytest-cache-files-*",
         ),
+    )
+    _restore_public_template_state(workspace)
+
+
+def _load_vibe_template_data(workspace: Path) -> dict[str, object]:
+    pyproject_path = workspace / "pyproject.toml"
+    pyproject_data = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
+    return pyproject_data["tool"]["vibe_template"]
+
+
+def _restore_public_template_state(workspace: Path) -> None:
+    current_state = _load_vibe_template_data(workspace)
+    text_replacements = [
+        (str(current_state["project_title"]), TEMPLATE_PROJECT_TITLE),
+        (str(current_state["distribution_name"]), TEMPLATE_DISTRIBUTION_NAME),
+        (str(current_state["package_name"]), TEMPLATE_PACKAGE_NAME),
+        (str(current_state["initial_version"]), TEMPLATE_INITIAL_VERSION),
+        (str(current_state["project_scope"]), TEMPLATE_PROJECT_SCOPE),
+        ("bootstrap_required = false", "bootstrap_required = true"),
+        ("bootstrap_required=False", "bootstrap_required=True"),
+    ]
+    for path in iter_text_files(
+        workspace_root=workspace,
+        suffixes=TEXT_FILE_SUFFIXES,
+        file_names=TEXT_FILE_NAMES,
+        skip_directories=SKIP_DIRECTORIES,
+    ):
+        original_content = path.read_text(encoding="utf-8")
+        updated_content = original_content
+        for old_value, new_value in text_replacements:
+            updated_content = updated_content.replace(old_value, new_value)
+        if path.name == "pyproject.toml":
+            updated_content = updated_content.replace(
+                f'license = {{ text = "{current_state["license_id"]}" }}',
+                f'license = {{ text = "{TEMPLATE_LICENSE_ID}" }}',
+            )
+            updated_content = updated_content.replace(
+                f'authors = [{{ name = "{current_state["author_name"]}" }}]',
+                f'authors = [{{ name = "{TEMPLATE_AUTHOR_NAME}" }}]',
+            )
+            updated_content = updated_content.replace(
+                f'author_name = "{current_state["author_name"]}"',
+                f'author_name = "{TEMPLATE_AUTHOR_NAME}"',
+            )
+            updated_content = updated_content.replace(
+                f'license_id = "{current_state["license_id"]}"',
+                f'license_id = "{TEMPLATE_LICENSE_ID}"',
+            )
+        if path.as_posix().endswith("docs/docs_for_ai/status.md"):
+            updated_content = updated_content.replace(
+                f"- License: {current_state['license_id']}",
+                f"- License: {TEMPLATE_LICENSE_ID}",
+            )
+        if updated_content != original_content:
+            path.write_text(updated_content, encoding="utf-8")
+
+    current_package_name = str(current_state["package_name"])
+    current_package_path = workspace / "src" / current_package_name
+    template_package_path = workspace / "src" / TEMPLATE_PACKAGE_NAME
+    if (
+        current_package_name != TEMPLATE_PACKAGE_NAME
+        and current_package_path.exists()
+        and not template_package_path.exists()
+    ):
+        current_package_path.rename(template_package_path)
+
+    (workspace / "LICENSE").write_text(
+        (
+            "MIT License\n\n"
+            "Copyright (c) 2026 Alejandro Mata Ali\n\n"
+            "Permission is hereby granted, free of charge, to any person obtaining a copy\n"
+            'of this software and associated documentation files (the "Software"), to deal\n'
+            "in the Software without restriction, including without limitation the rights\n"
+            "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n"
+            "copies of the Software, and to permit persons to whom the Software is\n"
+            "furnished to do so, subject to the following conditions:\n\n"
+            "The above copyright notice and this permission notice shall be included in all\n"
+            "copies or substantial portions of the Software.\n\n"
+            'THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n'
+            "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n"
+            "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n"
+            "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n"
+            "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n"
+            "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n"
+            "SOFTWARE.\n"
+        ),
+        encoding="utf-8",
+    )
+
+
+def _write_bootstrap_required_pyproject(workspace: Path, bootstrap_required: bool) -> None:
+    bootstrap_required_value = str(bootstrap_required).lower()
+    (workspace / "pyproject.toml").write_text(
+        (f"[tool.vibe_template]\nbootstrap_required = {bootstrap_required_value}\n"),
+        encoding="utf-8",
     )
 
 
@@ -117,6 +225,38 @@ def test_bootstrap_template_rejects_already_bootstrapped_workspace(temp_dir: Pat
         bootstrap_template(workspace_root=workspace, answers=answers, dry_run=True)
 
 
+def test_bootstrap_template_keeps_third_party_license_inventory_stable_for_public_mit_template(
+    temp_dir: Path,
+) -> None:
+    source_root = Path(__file__).resolve().parents[2]
+    workspace = temp_dir / "workspace"
+    _copy_template_workspace(source_root, workspace)
+    original_third_party_licenses = (workspace / "THIRD_PARTY_LICENSES").read_text(encoding="utf-8")
+
+    answers = BootstrapAnswers(
+        project_title="Apache Project",
+        distribution_name="apache-project",
+        package_name="apache_project",
+        author_name="Grace Hopper",
+        initial_version="0.5.0",
+        project_scope="Template publication regression coverage.",
+        license_id="Apache-2.0",
+    )
+
+    bootstrap_template(workspace_root=workspace, answers=answers, dry_run=False)
+
+    pyproject_content = (workspace / "pyproject.toml").read_text(encoding="utf-8")
+    status_content = (workspace / "docs" / "docs_for_ai" / "status.md").read_text(encoding="utf-8")
+    license_content = (workspace / "LICENSE").read_text(encoding="utf-8")
+    updated_third_party_licenses = (workspace / "THIRD_PARTY_LICENSES").read_text(encoding="utf-8")
+
+    assert 'license = { text = "Apache-2.0" }' in pyproject_content
+    assert 'authors = [{ name = "Grace Hopper" }]' in pyproject_content
+    assert "License: Apache-2.0" in status_content
+    assert license_content.startswith("Apache License")
+    assert updated_third_party_licenses == original_third_party_licenses
+
+
 def test_bootstrap_cli_reinstalls_for_the_new_package_name(
     temp_dir: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -124,13 +264,7 @@ def test_bootstrap_cli_reinstalls_for_the_new_package_name(
 ) -> None:
     workspace = temp_dir / "workspace"
     workspace.mkdir()
-    (workspace / "pyproject.toml").write_text(
-        """
-[tool.vibe_template]
-bootstrap_required = true
-""".strip(),
-        encoding="utf-8",
-    )
+    _write_bootstrap_required_pyproject(workspace, bootstrap_required=True)
     planned_change = PlannedChange(
         path=workspace / "src" / "bootstrap_cli_project",
         description="Rename package directory from project_name to bootstrap_cli_project",
@@ -191,13 +325,7 @@ def test_bootstrap_cli_fails_without_prompting_when_template_is_already_bootstra
 ) -> None:
     workspace = temp_dir / "workspace"
     workspace.mkdir()
-    (workspace / "pyproject.toml").write_text(
-        """
-[tool.vibe_template]
-bootstrap_required = false
-""".strip(),
-        encoding="utf-8",
-    )
+    _write_bootstrap_required_pyproject(workspace, bootstrap_required=False)
 
     def unexpected_prompt(label: str, default: str | None = None) -> str:
         pytest.fail(f"Unexpected prompt for {label} with {default}")

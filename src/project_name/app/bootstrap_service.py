@@ -101,7 +101,7 @@ def bootstrap_template(
         raise ValueError(BOOTSTRAP_ALREADY_COMPLETED_MESSAGE)
     validated_answers = _validate_answers(answers)
     replacements = _build_replacements(state, validated_answers)
-    changes = list(_collect_text_changes(workspace_root, replacements))
+    changes = list(_collect_text_changes(workspace_root, replacements, state, validated_answers))
     changes.extend(
         _collect_package_rename_changes(
             workspace_root,
@@ -119,7 +119,7 @@ def bootstrap_template(
     if dry_run:
         return BootstrapResult(changed=False, changes=tuple(changes))
 
-    _apply_text_replacements(workspace_root, replacements)
+    _apply_text_replacements(workspace_root, replacements, state, validated_answers)
     _rename_package_directory(
         workspace_root,
         state.package_name,
@@ -187,10 +187,8 @@ def _build_replacements(state: TemplateState, answers: BootstrapAnswers) -> list
         (state.project_title, answers.project_title),
         (state.distribution_name, answers.distribution_name),
         (state.package_name, answers.package_name),
-        (state.author_name, answers.author_name),
         (state.initial_version, answers.initial_version),
         (state.project_scope, answers.project_scope),
-        (state.license_id, answers.license_id),
         ("bootstrap_required = true", "bootstrap_required = false"),
         ("bootstrap_required=True", "bootstrap_required=False"),
     ]
@@ -199,11 +197,15 @@ def _build_replacements(state: TemplateState, answers: BootstrapAnswers) -> list
 def _collect_text_changes(
     workspace_root: Path,
     replacements: list[tuple[str, str]],
+    state: TemplateState,
+    answers: BootstrapAnswers,
 ) -> list[PlannedChange]:
     changes: list[PlannedChange] = []
     for path in _iter_text_files(workspace_root):
         original_content = path.read_text(encoding="utf-8")
-        updated_content = _replace_text(original_content, replacements)
+        updated_content = _updated_text_content(
+            path, original_content, replacements, state, answers
+        )
         if updated_content != original_content:
             changes.append(PlannedChange(path=path, description="Update template placeholders"))
     return changes
@@ -225,10 +227,55 @@ def _replace_text(content: str, replacements: list[tuple[str, str]]) -> str:
     return updated_content
 
 
-def _apply_text_replacements(workspace_root: Path, replacements: list[tuple[str, str]]) -> None:
+def _updated_text_content(
+    path: Path,
+    content: str,
+    replacements: list[tuple[str, str]],
+    state: TemplateState,
+    answers: BootstrapAnswers,
+) -> str:
+    updated_content = _replace_text(content, replacements)
+    if path.name == "pyproject.toml":
+        updated_content = _replace_text(
+            updated_content,
+            [
+                (
+                    f'license = {{ text = "{state.license_id}" }}',
+                    f'license = {{ text = "{answers.license_id}" }}',
+                ),
+                (
+                    f'authors = [{{ name = "{state.author_name}" }}]',
+                    f'authors = [{{ name = "{answers.author_name}" }}]',
+                ),
+                (
+                    f'author_name = "{state.author_name}"',
+                    f'author_name = "{answers.author_name}"',
+                ),
+                (
+                    f'license_id = "{state.license_id}"',
+                    f'license_id = "{answers.license_id}"',
+                ),
+            ],
+        )
+    if path.as_posix().endswith("docs/docs_for_ai/status.md"):
+        updated_content = _replace_text(
+            updated_content,
+            [(f"- License: {state.license_id}", f"- License: {answers.license_id}")],
+        )
+    return updated_content
+
+
+def _apply_text_replacements(
+    workspace_root: Path,
+    replacements: list[tuple[str, str]],
+    state: TemplateState,
+    answers: BootstrapAnswers,
+) -> None:
     for path in _iter_text_files(workspace_root):
         original_content = path.read_text(encoding="utf-8")
-        updated_content = _replace_text(original_content, replacements)
+        updated_content = _updated_text_content(
+            path, original_content, replacements, state, answers
+        )
         if updated_content != original_content:
             path.write_text(updated_content, encoding="utf-8")
 

@@ -1,10 +1,10 @@
 # Status
 
 - Phase: Template hardened for Windows-first bootstrap and maintenance
-- Last update: test isolation, cleanup walking, bootstrap guardrails, wrapper/runtime behavior, and fresh-copy CI smoke coverage were tightened
+- Last update: test isolation, cleanup walking, bootstrap guardrails, wrapper/runtime behavior, fresh-copy CI smoke coverage, and public-template licensing were tightened
 - Next step: Create a project from the template and run bootstrap once
 - Blockers: None in template state
-- License: LICENSE_ID_PENDING
+- License: MIT
 
 ## Checklist
 

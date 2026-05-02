@@ -8,8 +8,8 @@ version = "0.0.0"
 description = "PROJECT_SCOPE_PENDING"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "LICENSE_ID_PENDING" }
-authors = [{ name = "AUTHOR_NAME_PENDING" }]
+license = { text = "MIT" }
+authors = [{ name = "Alejandro Mata Ali" }]
 keywords = ["python", "template", "vibe-coding", "software"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -77,8 +77,8 @@ venv = ".venv"
 project_title = "Project Title Pending"
 distribution_name = "project-name"
 package_name = "project_name"
-author_name = "AUTHOR_NAME_PENDING"
+author_name = "Alejandro Mata Ali"
 initial_version = "0.0.0"
 project_scope = "PROJECT_SCOPE_PENDING"
-license_id = "LICENSE_ID_PENDING"
+license_id = "MIT"
 bootstrap_required = true
