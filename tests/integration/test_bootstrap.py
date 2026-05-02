@@ -25,7 +25,7 @@ from project_name.infrastructure.text_files import iter_text_files
 
 
 def _template_project_title() -> str:
-    return " ".join(("Project", "Title", "Pending"))
+    return " ".join(("Course", "Title", "Pending"))
 
 
 def _template_distribution_name() -> str:
@@ -45,7 +45,7 @@ def _template_initial_version() -> str:
 
 
 def _template_project_scope() -> str:
-    return "_".join(("PROJECT", "SCOPE", "PENDING"))
+    return "_".join(("LEARNING", "GOAL", "PENDING"))
 
 
 def _template_license_id() -> str:
@@ -154,6 +154,11 @@ def _restore_public_template_state(workspace: Path) -> None:
                 f"- License: {current_state['license_id']}",
                 f"- License: {_template_license_id()}",
             )
+        if path.as_posix().endswith("course/README.md"):
+            updated_content = updated_content.replace(
+                f"Educator: {current_state['author_name']}",
+                f"Educator: {_template_author_name()}",
+            )
         if _is_template_metadata_file(path):
             updated_content = _rewrite_template_metadata_scope_summary(
                 updated_content,
@@ -210,33 +215,35 @@ def test_bootstrap_template_updates_metadata_and_package_name(temp_dir: Path) ->
     _copy_template_workspace(source_root, workspace)
 
     answers = BootstrapAnswers(
-        project_title="Sample Project",
-        distribution_name="sample-project",
-        package_name="sample_project",
+        project_title="Sample Course",
+        distribution_name="sample-course",
+        package_name="sample_course",
         author_name="Ada Lovelace",
         initial_version="0.1.0",
-        project_scope="Tooling library for reliable experiments.",
+        project_scope="Teach reliable experiments through a short guided course.",
         license_id="MIT",
     )
 
     result = bootstrap_template(workspace_root=workspace, answers=answers, dry_run=False)
 
     assert result.changed is True
-    assert (workspace / "src" / "sample_project").is_dir()
+    assert (workspace / "src" / "sample_course").is_dir()
     assert not (workspace / "src" / _template_package_name()).exists()
 
     pyproject_content = (workspace / "pyproject.toml").read_text(encoding="utf-8")
     readme_content = (workspace / "README.md").read_text(encoding="utf-8")
+    course_readme_content = (workspace / "course" / "README.md").read_text(encoding="utf-8")
     status_content = (workspace / "docs" / "docs_for_ai" / "status.md").read_text(encoding="utf-8")
-    template_metadata_path = (
-        workspace / "src" / "sample_project" / "domain" / "template_metadata.py"
-    )
+    template_metadata_path = workspace / "src" / "sample_course" / "domain" / "template_metadata.py"
     template_metadata_content = template_metadata_path.read_text(encoding="utf-8")
 
-    assert "sample-project" in pyproject_content
+    assert "sample-course" in pyproject_content
     assert "Ada Lovelace" in pyproject_content
     assert "0.1.0" in pyproject_content
-    assert "Tooling library for reliable experiments." in readme_content
+    assert "Teach reliable experiments through a short guided course." in readme_content
+    assert "Sample Course" in course_readme_content
+    assert "Ada Lovelace" in course_readme_content
+    assert "Teach reliable experiments through a short guided course." in course_readme_content
     assert "License: MIT" in status_content
     assert "example.invalid" not in pyproject_content
     assert "Pending" not in readme_content
@@ -531,12 +538,12 @@ def test_bootstrap_cli_reinstalls_for_the_new_package_name(
     monkeypatch.setattr(cli_module, "_prompt", unexpected_prompt)
 
     args = argparse.Namespace(
-        project_title="Bootstrap CLI Project",
-        distribution_name="bootstrap-cli-project",
+        project_title="Bootstrap CLI Course",
+        distribution_name="bootstrap-cli-course",
         package_name=None,
         author_name="Katherine Johnson",
         initial_version="0.3.0",
-        project_scope="End-to-end bootstrap verification for the template.",
+        project_scope="End-to-end bootstrap verification for the course template.",
         license_id="MIT",
         dry_run=False,
     )

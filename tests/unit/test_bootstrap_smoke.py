@@ -45,12 +45,12 @@ def test_build_smoke_commands_use_workspace_python_and_noninteractive_bootstrap(
     module = _load_bootstrap_smoke_module()
     workspace_root = temp_dir / "workspace"
     config = module.SmokeTestConfig(
-        project_title="CI Template Smoke",
-        distribution_name="ci-template-smoke",
-        package_name="ci_template_smoke",
-        author_name="CI Smoke",
+        project_title="CI Education Template Smoke",
+        distribution_name="ci-education-template-smoke",
+        package_name="ci_education_template_smoke",
+        author_name="CI Educator",
         initial_version="0.1.0",
-        project_scope="Fresh template smoke validation.",
+        project_scope="Fresh course template smoke validation.",
         license_id="MIT",
     )
 
@@ -65,17 +65,17 @@ def test_build_smoke_commands_use_workspace_python_and_noninteractive_bootstrap(
         str(workspace_root / "scripts" / "run_template_command.py"),
         "bootstrap",
         "--project-title",
-        "CI Template Smoke",
+        "CI Education Template Smoke",
         "--distribution-name",
-        "ci-template-smoke",
+        "ci-education-template-smoke",
         "--package-name",
-        "ci_template_smoke",
+        "ci_education_template_smoke",
         "--author-name",
-        "CI Smoke",
+        "CI Educator",
         "--initial-version",
         "0.1.0",
         "--project-scope",
-        "Fresh template smoke validation.",
+        "Fresh course template smoke validation.",
         "--license-id",
         "MIT",
     ]

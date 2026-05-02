@@ -1,14 +1,14 @@
 # Status
 
-- Phase: Template hardened for Windows-first bootstrap and maintenance
-- Last update: test isolation, cleanup walking, bootstrap guardrails, wrapper/runtime behavior, fresh-copy CI smoke coverage, and public-template licensing were tightened
-- Next step: Create a project from the template and run bootstrap once
+- Phase: Education template baseline ready for course authoring
+- Last update: the template was repositioned around `course/`, learner-facing docs, and course-oriented bootstrap language while keeping the Python support layer minimal
+- Next step: Run bootstrap once and replace the sample modules in `course/` with your real lessons
 - Blockers: None in template state
 - License: MIT
 
 ## Checklist
 
-- [x] Library-first package structure exists
+- [x] Course-first content structure exists
 - [x] CLI commands exist
 - [x] Human documentation baseline exists
 - [x] AI documentation baseline exists
@@ -18,5 +18,5 @@
 - [x] Minimal stable wrappers exist
 - [x] Cleanup command protects `.venv`
 - [x] Cleanup tolerates inaccessible subtrees conservatively
-- [ ] Project-specific bootstrap completed
+- [ ] Course-specific bootstrap completed
 - [ ] Third-party license inventory regenerated after dependency install

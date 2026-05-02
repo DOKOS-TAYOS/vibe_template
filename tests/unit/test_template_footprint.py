@@ -46,3 +46,16 @@ def test_ai_docs_directory_contains_only_three_files() -> None:
         "project_ai_instructions.md",
         "status.md",
     ]
+
+
+def test_course_directory_contains_only_three_files() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    course_file_names = sorted(
+        path.name for path in (repo_root / "course").iterdir() if path.is_file()
+    )
+
+    assert course_file_names == [
+        "README.md",
+        "module-01-foundations.md",
+        "module-02-guided-practice.md",
+    ]

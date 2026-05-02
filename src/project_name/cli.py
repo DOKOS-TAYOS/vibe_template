@@ -44,13 +44,13 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Project template CLI for Python vibe coding projects."
+        description="Course template CLI for simple technical learning projects."
     )
     subparsers = parser.add_subparsers(dest="command")
 
     bootstrap_parser = subparsers.add_parser(
         "bootstrap",
-        help="Configure template metadata and rename the package.",
+        help="Configure course metadata and rename the package.",
     )
     bootstrap_parser.add_argument("--project-title")
     bootstrap_parser.add_argument("--distribution-name")
@@ -96,12 +96,12 @@ def _handle_bootstrap(args: argparse.Namespace) -> int:
             derive_package_name(distribution_name),
         )
     answers = BootstrapAnswers(
-        project_title=args.project_title or _prompt("Project title", "Project Title Pending"),
+        project_title=args.project_title or _prompt("Course title", "Course Title Pending"),
         distribution_name=distribution_name,
         package_name=package_name,
-        author_name=args.author_name or _prompt("Author name"),
+        author_name=args.author_name or _prompt("Educator name"),
         initial_version=args.initial_version or _prompt("Initial version", "0.1.0"),
-        project_scope=args.project_scope or _prompt("Project scope"),
+        project_scope=args.project_scope or _prompt("Learning goal summary"),
         license_id=args.license_id or _prompt("License ID", "MIT"),
     )
     result = bootstrap_template(workspace_root=project_root, answers=answers, dry_run=args.dry_run)

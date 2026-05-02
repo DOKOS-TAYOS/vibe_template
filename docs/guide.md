@@ -1,9 +1,10 @@
-# Developer Guide
+# Educator Guide
 
 ## Core Principles
 
-- Prefer small, well-named modules with one responsibility.
-- Treat the library as the product core and the CLI as a thin entrypoint.
+- Treat `course/` as the main source of truth for the learning experience.
+- Keep modules short, explicit, and easy to edit in plain Markdown.
+- Prefer small, well-named modules with one responsibility when you add Python code.
 - Keep imports relative inside the package so bootstrap renaming stays safe.
 - Use tests to define behavior before implementation changes.
 - Update human docs and AI docs when architecture or workflow changes.
@@ -13,11 +14,12 @@
 1. Activate `.venv`.
 2. Install with `python -m pip install -e .[dev]` if the environment is not ready yet.
 3. Run bootstrap once for a fresh project and then treat the result as the real codebase.
-4. Write or update a failing test.
-5. Implement the minimal change.
-6. Run the smallest relevant test command.
-7. Refactor while staying green.
-8. Before finishing, run the full quality flow.
+4. Rewrite the overview and modules in `course/` before adding extra tooling.
+5. Write or update a failing test for any behavior change in Python code.
+6. Implement the minimal change.
+7. Run the smallest relevant test command.
+8. Refactor while staying green.
+9. Before finishing, run the full quality flow.
 
 ## Stable Entry Points
 
@@ -30,6 +32,7 @@ Use direct `python -m <package>.cli ...` commands when you specifically want the
 ## Documentation Responsibilities
 
 - `README.md`: overview and first-run expectations
+- `course/README.md`: learner path and educator-facing course overview
 - `docs/quick-start.md`: exact commands for a fresh project
 - `docs/api.md`: public API and CLI contract changes
 - `docs/architecture.md`: layer or data-flow changes

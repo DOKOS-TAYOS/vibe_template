@@ -33,7 +33,8 @@ def test_library_example_runs() -> None:
     )
 
     assert completed_process.returncode == 0
-    assert f"Library example using {metadata.package_name}" in completed_process.stdout
+    assert f"Course template package: {metadata.package_name}" in completed_process.stdout
+    assert "Author your lessons in: course/" in completed_process.stdout
     assert f"Bootstrap required: {metadata.bootstrap_required}" in completed_process.stdout
 
 

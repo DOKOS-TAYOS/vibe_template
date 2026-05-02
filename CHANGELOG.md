@@ -11,6 +11,21 @@ All notable changes to this template are documented in this file.
 - Human documentation, AI documentation, examples, and CI defaults.
 - TDD-oriented tests for bootstrap, cleanup, CLI, public API, and examples.
 - A reusable `scripts/bootstrap_smoke.py` helper that creates a fresh template copy, bootstraps it non-interactively, and runs the full quality flow.
+- A new `course/` authoring area with one overview and two example modules for educator-friendly course editing.
+
+### Changed
+
+- The default branch content now presents the repo as an education template for simple technical courses, with `course/` as the main authoring surface and the Python package acting as support tooling.
+- Bootstrap prompts, examples, smoke defaults, and human/AI docs now use course-oriented language focused on educators, learners, and learning goals.
+- The template footprint is leaner by default: removed `CITATION.cff`, removed `docs/features.md`, and reduced `bin/` wrappers to bootstrap, quality, and clean.
+- The recommended first-run flow now uses stable wrappers in `bin/`, which keep working across the bootstrap package rename and prefer the local `.venv`.
+- The public CLI now focuses on `bootstrap`, `quality`, `test`, `clean`, and `licenses`; the old `demo` command was removed in favor of real examples built on safe commands.
+- AI documentation was compacted to three files, and the human docs were tightened to reduce overlap between the README, quick start, and guide.
+- The redundant `scripts/clean.py` helper was removed, and `hatchling` no longer ships as a direct dev dependency in the template environment.
+- `quality` and `test` now invoke tools through `sys.executable -m ...`, which keeps interpreter selection consistent across Windows and Linux.
+- Pytest returned to its default cache naming while Ruff cleanup rules were updated for the standard `.pytest_cache` directory.
+- CI now includes a dedicated fresh-copy template smoke job on Windows and Ubuntu, using Python 3.12 to validate the real bootstrap-plus-quality flow end to end.
+- The template repository now ships with a real MIT license and `Alejandro Mata Ali` as the template author, while still leaving bootstrap in charge of project-specific identity.
 
 ### Fixed
 
@@ -27,15 +42,3 @@ All notable changes to this template are documented in this file.
 - `clean` now walks directories conservatively, skips inaccessible subtrees, and no longer relies on fragile recursive globbing.
 - Automated tests no longer depend on repo-local `test-artifacts`, which avoids the Windows permission issues seen in temporary workspaces.
 - Bootstrap-facing tests and example assertions now stay valid after a fresh-copy smoke bootstrap, instead of assuming the repo is always still in template state.
-
-### Changed
-
-- The template footprint is leaner by default: removed `CITATION.cff`, removed `docs/features.md`, and reduced `bin/` wrappers to bootstrap, quality, and clean.
-- The recommended first-run flow now uses stable wrappers in `bin/`, which keep working across the bootstrap package rename and prefer the local `.venv`.
-- The public CLI now focuses on `bootstrap`, `quality`, `test`, `clean`, and `licenses`; the old `demo` command was removed in favor of real examples built on safe commands.
-- AI documentation was compacted to three files, and the human docs were tightened to reduce overlap between the README, quick start, and guide.
-- The redundant `scripts/clean.py` helper was removed, and `hatchling` no longer ships as a direct dev dependency in the template environment.
-- `quality` and `test` now invoke tools through `sys.executable -m ...`, which keeps interpreter selection consistent across Windows and Linux.
-- Pytest returned to its default cache naming while Ruff cleanup rules were updated for the standard `.pytest_cache` directory.
-- CI now includes a dedicated fresh-copy template smoke job on Windows and Ubuntu, using Python 3.12 to validate the real bootstrap-plus-quality flow end to end.
-- The template repository now ships with a real MIT license and `Alejandro Mata Ali` as the template author, while still leaving bootstrap in charge of project-specific identity.

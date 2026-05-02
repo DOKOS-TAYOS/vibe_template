@@ -17,8 +17,8 @@ def get_template_metadata() -> TemplateMetadata:
     return TemplateMetadata(
         package_name="project_name",
         distribution_name="project-name",
-        project_title="Project Title Pending",
+        project_title="Course Title Pending",
         bootstrap_required=True,
-        scope_summary="PROJECT_SCOPE_PENDING",
+        scope_summary="LEARNING_GOAL_PENDING",
         cli_commands=("bootstrap", "quality", "test", "clean", "licenses"),
     )

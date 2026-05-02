@@ -2,6 +2,7 @@
 
 ## Bootstrap Fails With Invalid Names
 
+- course titles can contain normal human-readable text
 - distribution names should look like `my-project`
 - package names should look like `my_project`
 - versions should look like `0.1.0`
@@ -11,7 +12,7 @@
 `bootstrap` is a one-time setup step for a fresh copy of the template.
 
 - if you already configured this repository once, keep working in it without running bootstrap again
-- if you want a new project, create a fresh copy from the template first
+- if you want a new course, create a fresh copy from the template first
 
 ## `licenses` Command Fails
 

@@ -105,18 +105,18 @@ def run_smoke(source_root: Path, workspace_root: Path, config: SmokeTestConfig) 
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Create a fresh template copy, bootstrap it, and run quality checks."
+        description="Create a fresh course template copy, bootstrap it, and run quality checks."
     )
     parser.add_argument(
         "--workspace-root",
         default=str(Path(tempfile.gettempdir()) / "vibe-template-smoke"),
     )
-    parser.add_argument("--project-title", default="CI Template Smoke")
-    parser.add_argument("--distribution-name", default="ci-template-smoke")
-    parser.add_argument("--package-name", default="ci_template_smoke")
-    parser.add_argument("--author-name", default="CI Smoke")
+    parser.add_argument("--project-title", default="CI Education Template Smoke")
+    parser.add_argument("--distribution-name", default="ci-education-template-smoke")
+    parser.add_argument("--package-name", default="ci_education_template_smoke")
+    parser.add_argument("--author-name", default="CI Educator")
     parser.add_argument("--initial-version", default="0.1.0")
-    parser.add_argument("--project-scope", default="Fresh template smoke validation.")
+    parser.add_argument("--project-scope", default="Fresh course template smoke validation.")
     parser.add_argument("--license-id", default="MIT")
     return parser
 

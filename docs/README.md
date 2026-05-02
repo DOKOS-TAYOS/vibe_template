@@ -2,8 +2,9 @@
 
 ## Human Docs
 
+- [Course authoring area](../course/README.md)
 - [Quick start](quick-start.md)
-- [Developer guide](guide.md)
+- [Educator guide](guide.md)
 - [Architecture](architecture.md)
 - [API overview](api.md)
 - [Troubleshooting](troubleshooting.md)

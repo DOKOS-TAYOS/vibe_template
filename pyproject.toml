@@ -5,12 +5,12 @@ build-backend = "hatchling.build"
 [project]
 name = "project-name"
 version = "0.0.0"
-description = "PROJECT_SCOPE_PENDING"
+description = "LEARNING_GOAL_PENDING"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "Alejandro Mata Ali" }]
-keywords = ["python", "template", "vibe-coding", "software"]
+keywords = ["python", "template", "education", "course"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Developers",
@@ -74,11 +74,11 @@ venvPath = "."
 venv = ".venv"
 
 [tool.vibe_template]
-project_title = "Project Title Pending"
+project_title = "Course Title Pending"
 distribution_name = "project-name"
 package_name = "project_name"
 author_name = "Alejandro Mata Ali"
 initial_version = "0.0.0"
-project_scope = "PROJECT_SCOPE_PENDING"
+project_scope = "LEARNING_GOAL_PENDING"
 license_id = "MIT"
 bootstrap_required = true

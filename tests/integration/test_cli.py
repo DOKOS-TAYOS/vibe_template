@@ -42,5 +42,6 @@ def test_cli_help_lists_expected_commands() -> None:
     assert completed_process.returncode == 0
     assert "bootstrap" in completed_process.stdout
     assert "clean" in completed_process.stdout
+    assert "course" in completed_process.stdout.lower()
     assert "licenses" in completed_process.stdout
     assert "demo" not in completed_process.stdout

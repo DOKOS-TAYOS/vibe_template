@@ -10,7 +10,7 @@ from project_name import TemplateMetadata, get_template_metadata
 
 ### `TemplateMetadata`
 
-Immutable dataclass describing the current template metadata:
+Immutable dataclass describing the current course-template metadata:
 
 - `package_name`
 - `distribution_name`
@@ -18,6 +18,8 @@ Immutable dataclass describing the current template metadata:
 - `bootstrap_required`
 - `scope_summary`
 - `cli_commands`
+
+`scope_summary` is the short learning-goal summary that bootstrap propagates through the template.
 
 ### `get_template_metadata()`
 
@@ -33,7 +35,7 @@ Returns the current `TemplateMetadata` snapshot.
 
 ### CLI behavior notes
 
-- `bootstrap` is for a fresh template copy only. Once `bootstrap_required` becomes `False`, the command exits with an error instead of prompting again.
+- `bootstrap` is for a fresh template copy only. It asks for the course title, educator name, and learning goal summary while keeping the same technical package fields under the hood. Once `bootstrap_required` becomes `False`, the command exits with an error instead of prompting again.
 - `quality` runs Ruff, pytest, and pyright through the active interpreter, which keeps `.venv` resolution consistent on Windows and Linux.
 - `test` runs pytest through the active interpreter.
 - `clean` removes caches and temporary artifacts, but stays conservative around `.venv`, `.git`, and inaccessible subtrees.

@@ -1,14 +1,14 @@
-# Project Title Pending
+# Course Title Pending
 
-Stable Python template for software-oriented projects. It starts as a reusable library with a lightweight CLI, strong quality defaults, and a compact handoff path for both people and AI contributors.
+Education template for simple technical courses. It keeps authoring centered in `course/`, gives learners a clear route through the material, and keeps the Python layer available for bootstrap, checks, and light automation.
 
 ## Official First Run
 
 This template is intentionally incomplete until bootstrap fills in:
 
-- author name
+- educator name
 - initial version
-- project scope
+- learning goal summary
 - license choice
 - final distribution and package names
 
@@ -18,9 +18,15 @@ This template is intentionally incomplete until bootstrap fills in:
 4. Let bootstrap finish its automatic editable reinstall.
 5. Run `bin\quality.cmd` on Windows or `./bin/quality.sh` on Linux/macOS.
 
-Bootstrap is a one-time step for a fresh copy of the template. After it finishes, treat the repository as the real project codebase and keep using the stable wrappers when you want the safest entrypoint.
+Bootstrap is a one-time step for a fresh copy of the template. After it finishes, treat the repository as the real course project codebase and keep using the stable wrappers when you want the safest entrypoint.
 
-This template repository itself is published under MIT. Bootstrap can keep that choice or replace it for the project you create from the template.
+This template repository itself is published under MIT. Bootstrap can keep that choice or replace it for the course project you create from the template.
+
+## Where To Work
+
+- Educators should spend most of their time in [course/README.md](course/README.md) and the two example modules in `course/`.
+- Learners should start from the course overview and then follow the numbered modules in order.
+- The Python package and CLI stay intentionally small. Use them when you need bootstrap, checks, cleanup, or light course tooling.
 
 ## Why the Wrappers Stay Useful
 
@@ -28,12 +34,13 @@ Before bootstrap, the placeholder package is still called `project_name`. After 
 
 If you want the raw module entrypoint, use `python -m project_name.cli ...` before bootstrap and the new package name after bootstrap.
 
-## Project Scope
+## Learning Goal
 
-`PROJECT_SCOPE_PENDING`
+`LEARNING_GOAL_PENDING`
 
 ## What This Template Includes
 
+- `course/` with one overview and two example modules
 - `src` layout with a small public API and a CLI entrypoint
 - TDD-oriented tests for API, bootstrap, cleanup, CLI, and examples
 - stable wrappers for bootstrap, quality, and clean
@@ -44,7 +51,7 @@ If you want the raw module entrypoint, use `python -m project_name.cli ...` befo
 
 - [Documentation index](docs/README.md)
 - [Quick start](docs/quick-start.md)
-- [Developer guide](docs/guide.md)
+- [Educator guide](docs/guide.md)
 - [Architecture](docs/architecture.md)
 - [API overview](docs/api.md)
 - [AI user guide](docs/docs_for_ai/guide_for_ai_users.md)

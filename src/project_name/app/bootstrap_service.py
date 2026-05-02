@@ -347,6 +347,11 @@ def _updated_text_content(
             updated_content,
             [(f"- License: {state.license_id}", f"- License: {answers.license_id}")],
         )
+    if path.as_posix().endswith("course/README.md"):
+        updated_content = _replace_text(
+            updated_content,
+            [(f"Educator: {state.author_name}", f"Educator: {answers.author_name}")],
+        )
     return updated_content
 
 
