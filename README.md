@@ -36,7 +36,7 @@ If you want the raw module entrypoint, use `python -m project_name.cli ...` befo
 - TDD-oriented tests for API, bootstrap, cleanup, CLI, and examples
 - stable wrappers for bootstrap, quality, and clean
 - documentation for humans plus a short AI fast path
-- CI for Windows and Ubuntu with Python 3.11 to 3.13
+- CI for Windows and Ubuntu with Python 3.11 to 3.13, plus a fresh-copy bootstrap smoke run
 
 ## More Docs
 

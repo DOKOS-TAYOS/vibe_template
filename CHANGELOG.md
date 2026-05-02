@@ -10,6 +10,7 @@ All notable changes to this template are documented in this file.
 - Cleanup, quality, test, and license commands with Windows/Linux wrappers.
 - Human documentation, AI documentation, examples, and CI defaults.
 - TDD-oriented tests for bootstrap, cleanup, CLI, public API, and examples.
+- A reusable `scripts/bootstrap_smoke.py` helper that creates a fresh template copy, bootstraps it non-interactively, and runs the full quality flow.
 
 ### Fixed
 
@@ -32,3 +33,4 @@ All notable changes to this template are documented in this file.
 - The redundant `scripts/clean.py` helper was removed, and `hatchling` no longer ships as a direct dev dependency in the template environment.
 - `quality` and `test` now invoke tools through `sys.executable -m ...`, which keeps interpreter selection consistent across Windows and Linux.
 - Pytest returned to its default cache naming while Ruff cleanup rules were updated for the standard `.pytest_cache` directory.
+- CI now includes a dedicated fresh-copy template smoke job on Windows and Ubuntu, using Python 3.12 to validate the real bootstrap-plus-quality flow end to end.
