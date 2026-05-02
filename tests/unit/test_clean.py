@@ -42,6 +42,15 @@ def test_collect_cleanup_paths_matches_generated_pytest_cache_directories(temp_d
     assert generated_cache_dir in cleanup_paths
 
 
+def test_collect_cleanup_paths_removes_notebook_checkpoints(temp_dir: Path) -> None:
+    notebook_checkpoint_dir = temp_dir / "notebooks" / ".ipynb_checkpoints"
+    notebook_checkpoint_dir.mkdir(parents=True)
+
+    cleanup_paths = collect_cleanup_paths(temp_dir)
+
+    assert notebook_checkpoint_dir in cleanup_paths
+
+
 def test_collect_cleanup_paths_skips_directories_that_contain_nested_virtual_environments(
     temp_dir: Path,
 ) -> None:

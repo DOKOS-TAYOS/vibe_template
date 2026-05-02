@@ -6,6 +6,7 @@ All notable changes to this template are documented in this file.
 
 ### Added
 
+- Research-first template variant with a verified `research/` area, tracked `experiments/` and `notebooks/` working directories, and documentation that separates researcher-checked conclusions from AI-delegable work.
 - Python software template with `src` layout, CLI entrypoint, and bootstrap flow.
 - Cleanup, quality, test, and license commands with Windows/Linux wrappers.
 - Human documentation, AI documentation, examples, and CI defaults.
@@ -30,6 +31,7 @@ All notable changes to this template are documented in this file.
 
 ### Changed
 
+- Template messaging now centers computational research workflows while keeping the public Python API and CLI command set unchanged.
 - The template footprint is leaner by default: removed `CITATION.cff`, removed `docs/features.md`, and reduced `bin/` wrappers to bootstrap, quality, and clean.
 - The recommended first-run flow now uses stable wrappers in `bin/`, which keep working across the bootstrap package rename and prefer the local `.venv`.
 - The public CLI now focuses on `bootstrap`, `quality`, `test`, `clean`, and `licenses`; the old `demo` command was removed in favor of real examples built on safe commands.

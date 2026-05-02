@@ -1,5 +1,11 @@
 # Documentation Index
 
+## Verified Research Files
+
+- [Research question](../research/question.md)
+- [Research protocol](../research/protocol.md)
+- [Research claims](../research/claims.md)
+
 ## Human Docs
 
 - [Quick start](quick-start.md)

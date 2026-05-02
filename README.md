@@ -1,6 +1,6 @@
 # Project Title Pending
 
-Stable Python template for software-oriented projects. It starts as a reusable library with a lightweight CLI, strong quality defaults, and a compact handoff path for both people and AI contributors.
+Hybrid research-first Python template for computational research. It keeps a reusable Python core and a lightweight CLI, but makes the researcher workflow and the human-vs-AI verification boundary the visible center of the project.
 
 ## Official First Run
 
@@ -17,10 +17,33 @@ This template is intentionally incomplete until bootstrap fills in:
 3. Run `bin\bootstrap.cmd` on Windows or `./bin/bootstrap.sh` on Linux/macOS.
 4. Let bootstrap finish its automatic editable reinstall.
 5. Run `bin\quality.cmd` on Windows or `./bin/quality.sh` on Linux/macOS.
+6. Start by filling the verified research files in `research/`.
 
 Bootstrap is a one-time step for a fresh copy of the template. After it finishes, treat the repository as the real project codebase and keep using the stable wrappers when you want the safest entrypoint.
 
 This template repository itself is published under MIT. Bootstrap can keep that choice or replace it for the project you create from the template.
+
+## Verified Research Area
+
+These are the first files a researcher should read and edit:
+
+- [Research question](research/question.md)
+- [Research protocol](research/protocol.md)
+- [Research claims](research/claims.md)
+
+Only files under `research/` count as checked research decisions or conclusions.
+
+- `research/question.md` is the validated problem statement and success criteria.
+- `research/protocol.md` is the approved methodology and evaluation contract.
+- `research/claims.md` is the claim and evidence register that the researcher must explicitly confirm.
+
+Everything else in the repository is working material.
+
+- `experiments/` holds reproducible runs, scripts, configs, and outputs.
+- `notebooks/` is optional and exploratory, never the authoritative source for final claims.
+- `src/`, `scripts/`, `tests/`, `examples/`, and `bin/` are the delegable implementation side of the project.
+
+AI can draft code, analyses, plots, summaries, and scaffolding, but nothing outside `research/` should be treated as a checked conclusion until the researcher promotes it there.
 
 ## Why the Wrappers Stay Useful
 
@@ -34,6 +57,7 @@ If you want the raw module entrypoint, use `python -m project_name.cli ...` befo
 
 ## What This Template Includes
 
+- verified research files that separate human-checked decisions from AI-delegable work
 - `src` layout with a small public API and a CLI entrypoint
 - TDD-oriented tests for API, bootstrap, cleanup, CLI, and examples
 - stable wrappers for bootstrap, quality, and clean
@@ -42,6 +66,9 @@ If you want the raw module entrypoint, use `python -m project_name.cli ...` befo
 
 ## More Docs
 
+- [Research question](research/question.md)
+- [Research protocol](research/protocol.md)
+- [Research claims](research/claims.md)
 - [Documentation index](docs/README.md)
 - [Quick start](docs/quick-start.md)
 - [Developer guide](docs/guide.md)

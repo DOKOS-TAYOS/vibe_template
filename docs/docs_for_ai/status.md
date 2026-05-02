@@ -1,14 +1,16 @@
 # Status
 
-- Phase: Template hardened for Windows-first bootstrap and maintenance
-- Last update: test isolation, cleanup walking, bootstrap guardrails, wrapper/runtime behavior, fresh-copy CI smoke coverage, and public-template licensing were tightened
-- Next step: Create a project from the template and run bootstrap once
+- Phase: Research-first computational template with an explicit human verification boundary
+- Last update: verified research files, research-first docs, notebook checkpoint cleanup, and research-oriented examples were aligned
+- Next step: Create a project from the template, run bootstrap once, and confirm `research/question.md` plus `research/protocol.md`
 - Blockers: None in template state
 - License: MIT
 
 ## Checklist
 
-- [x] Library-first package structure exists
+- [x] Verified research area exists
+- [x] Experiments and notebooks working areas exist
+- [x] Python support package structure exists
 - [x] CLI commands exist
 - [x] Human documentation baseline exists
 - [x] AI documentation baseline exists
@@ -19,4 +21,7 @@
 - [x] Cleanup command protects `.venv`
 - [x] Cleanup tolerates inaccessible subtrees conservatively
 - [ ] Project-specific bootstrap completed
+- [ ] Research question validated for the real project
+- [ ] Research protocol validated for the real project
+- [ ] Research claims reviewed for the real project
 - [ ] Third-party license inventory regenerated after dependency install

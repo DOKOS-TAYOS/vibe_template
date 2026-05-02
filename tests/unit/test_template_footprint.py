@@ -46,3 +46,31 @@ def test_ai_docs_directory_contains_only_three_files() -> None:
         "project_ai_instructions.md",
         "status.md",
     ]
+
+
+def test_research_workspace_contains_only_verified_research_files() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    research_root = repo_root / "research"
+    research_file_names = sorted(path.name for path in research_root.iterdir() if path.is_file())
+
+    assert research_file_names == [
+        "claims.md",
+        "protocol.md",
+        "question.md",
+    ]
+    assert (repo_root / "experiments").is_dir()
+    assert (repo_root / "notebooks").is_dir()
+
+
+def test_readme_and_docs_index_surface_verified_research_files() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    readme_text = (repo_root / "README.md").read_text(encoding="utf-8")
+    docs_index_text = (repo_root / "docs" / "README.md").read_text(encoding="utf-8")
+
+    for research_path in (
+        "research/question.md",
+        "research/protocol.md",
+        "research/claims.md",
+    ):
+        assert research_path in readme_text
+        assert research_path in docs_index_text

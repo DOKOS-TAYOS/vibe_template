@@ -44,7 +44,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Project template CLI for Python vibe coding projects."
+        description="Project template CLI for computational research projects."
     )
     subparsers = parser.add_subparsers(dest="command")
 

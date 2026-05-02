@@ -10,10 +10,11 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "Alejandro Mata Ali" }]
-keywords = ["python", "template", "vibe-coding", "software"]
+keywords = ["python", "template", "research", "computational-research", "reproducibility"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
