@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import shutil
 import tomllib
 from pathlib import Path
@@ -16,6 +17,8 @@ from project_name.app.bootstrap_service import (
     BootstrapAnswers,
     BootstrapResult,
     PlannedChange,
+    _is_template_metadata_file,
+    _rewrite_template_metadata_scope_summary,
     bootstrap_template,
 )
 from project_name.infrastructure.text_files import iter_text_files
@@ -57,6 +60,28 @@ def _bootstrap_required_assignment(value: bool) -> str:
 def _bootstrap_required_metadata_value(value: bool) -> str:
     bool_value = "True" if value else "False"
     return f"bootstrap_required={bool_value}"
+
+
+def _max_line_length(content: str) -> int:
+    return max((len(line) for line in content.splitlines()), default=0)
+
+
+def _read_scope_summary_from_template_metadata(template_metadata_path: Path) -> str:
+    module = ast.parse(template_metadata_path.read_text(encoding="utf-8"))
+
+    for node in ast.walk(module):
+        if not isinstance(node, ast.Call):
+            continue
+        if not isinstance(node.func, ast.Name) or node.func.id != "TemplateMetadata":
+            continue
+        for keyword_node in node.keywords:
+            if keyword_node.arg != "scope_summary":
+                continue
+            scope_summary = ast.literal_eval(keyword_node.value)
+            assert isinstance(scope_summary, str)
+            return scope_summary
+
+    raise AssertionError("scope_summary assignment not found in template metadata")
 
 
 def _copy_template_workspace(source_root: Path, workspace: Path) -> None:
@@ -128,6 +153,11 @@ def _restore_public_template_state(workspace: Path) -> None:
             updated_content = updated_content.replace(
                 f"- License: {current_state['license_id']}",
                 f"- License: {_template_license_id()}",
+            )
+        if _is_template_metadata_file(path):
+            updated_content = _rewrite_template_metadata_scope_summary(
+                updated_content,
+                _template_project_scope(),
             )
         if updated_content != original_content:
             path.write_text(updated_content, encoding="utf-8")
@@ -213,6 +243,75 @@ def test_bootstrap_template_updates_metadata_and_package_name(temp_dir: Path) ->
     assert "bootstrap_required=False" in template_metadata_content
 
 
+def test_bootstrap_template_wraps_long_scope_summary_in_metadata_file(
+    temp_dir: Path,
+) -> None:
+    source_root = Path(__file__).resolve().parents[2]
+    workspace = temp_dir / "workspace"
+    _copy_template_workspace(source_root, workspace)
+
+    long_scope = " ".join(
+        [
+            "Reliable",
+            "cross-platform",
+            "automation",
+            "for",
+            "bootstrap",
+            "regression",
+            "coverage",
+            "that",
+            "must",
+            "keep",
+            "generated",
+            "template",
+            "metadata",
+            "readable,",
+            "stable,",
+            "and",
+            "within",
+            "the",
+            "configured",
+            "line",
+            "length",
+            "limit",
+            "even",
+            "when",
+            "the",
+            "project",
+            "scope",
+            "is",
+            "much",
+            "longer",
+            "than",
+            "the",
+            "placeholder",
+            "used",
+            "by",
+            "the",
+            "template.",
+        ]
+    )
+    answers = BootstrapAnswers(
+        project_title="Scope Safe Project",
+        distribution_name="scope-safe-project",
+        package_name="scope_safe_project",
+        author_name="Barbara Liskov",
+        initial_version="0.6.0",
+        project_scope=long_scope,
+        license_id="MIT",
+    )
+
+    bootstrap_template(workspace_root=workspace, answers=answers, dry_run=False)
+
+    template_metadata_path = (
+        workspace / "src" / "scope_safe_project" / "domain" / "template_metadata.py"
+    )
+    template_metadata_content = template_metadata_path.read_text(encoding="utf-8")
+
+    assert _max_line_length(template_metadata_content) <= 100
+    assert _read_scope_summary_from_template_metadata(template_metadata_path) == long_scope
+
+
 def test_bootstrap_template_dry_run_leaves_files_unchanged(temp_dir: Path) -> None:
     source_root = Path(__file__).resolve().parents[2]
     workspace = temp_dir / "workspace"
@@ -264,7 +363,15 @@ def test_bootstrap_template_keeps_third_party_license_inventory_stable_for_publi
     source_root = Path(__file__).resolve().parents[2]
     workspace = temp_dir / "workspace"
     _copy_template_workspace(source_root, workspace)
-    original_third_party_licenses = (workspace / "THIRD_PARTY_LICENSES").read_text(encoding="utf-8")
+    third_party_licenses_path = workspace / "THIRD_PARTY_LICENSES"
+    third_party_licenses_with_placeholder = (
+        third_party_licenses_path.read_text(encoding="utf-8")
+        + f"\nTemplate scope marker: {_template_project_scope()}\n"
+    )
+    third_party_licenses_path.write_text(
+        third_party_licenses_with_placeholder,
+        encoding="utf-8",
+    )
 
     answers = BootstrapAnswers(
         project_title="Apache Project",
@@ -276,18 +383,109 @@ def test_bootstrap_template_keeps_third_party_license_inventory_stable_for_publi
         license_id="Apache-2.0",
     )
 
-    bootstrap_template(workspace_root=workspace, answers=answers, dry_run=False)
+    result = bootstrap_template(workspace_root=workspace, answers=answers, dry_run=False)
 
     pyproject_content = (workspace / "pyproject.toml").read_text(encoding="utf-8")
     status_content = (workspace / "docs" / "docs_for_ai" / "status.md").read_text(encoding="utf-8")
     license_content = (workspace / "LICENSE").read_text(encoding="utf-8")
-    updated_third_party_licenses = (workspace / "THIRD_PARTY_LICENSES").read_text(encoding="utf-8")
+    updated_third_party_licenses = third_party_licenses_path.read_text(encoding="utf-8")
 
     assert 'license = { text = "Apache-2.0" }' in pyproject_content
     assert 'authors = [{ name = "Grace Hopper" }]' in pyproject_content
     assert "License: Apache-2.0" in status_content
     assert license_content.startswith("Apache License")
-    assert updated_third_party_licenses == original_third_party_licenses
+    assert all(change.path.name != "THIRD_PARTY_LICENSES" for change in result.changes)
+    assert updated_third_party_licenses == third_party_licenses_with_placeholder
+
+
+def test_restore_public_template_state_keeps_third_party_license_inventory_stable(
+    temp_dir: Path,
+) -> None:
+    source_root = Path(__file__).resolve().parents[2]
+    workspace = temp_dir / "workspace"
+    _copy_template_workspace(source_root, workspace)
+
+    answers = BootstrapAnswers(
+        project_title="Restore Stability Project",
+        distribution_name="restore-stability-project",
+        package_name="restore_stability_project",
+        author_name="Annie Easley",
+        initial_version="0.7.0",
+        project_scope="Restore helper regression coverage.",
+        license_id="MIT",
+    )
+
+    bootstrap_template(workspace_root=workspace, answers=answers, dry_run=False)
+
+    third_party_licenses_path = workspace / "THIRD_PARTY_LICENSES"
+    third_party_licenses_with_project_identity = (
+        third_party_licenses_path.read_text(encoding="utf-8")
+        + f"\nProject scope marker: {answers.project_scope}\n"
+    )
+    third_party_licenses_path.write_text(
+        third_party_licenses_with_project_identity,
+        encoding="utf-8",
+    )
+
+    _restore_public_template_state(workspace)
+
+    assert (
+        third_party_licenses_path.read_text(encoding="utf-8")
+        == third_party_licenses_with_project_identity
+    )
+
+
+def test_restore_public_template_state_rewrites_multiline_scope_summary_to_template_placeholder(
+    temp_dir: Path,
+) -> None:
+    source_root = Path(__file__).resolve().parents[2]
+    workspace = temp_dir / "workspace"
+    _copy_template_workspace(source_root, workspace)
+
+    long_scope = (
+        "Multiline metadata formatting should still allow the test helper to restore "
+        "the public template placeholder without leaving bootstrapped content behind."
+    )
+    answers = BootstrapAnswers(
+        project_title="Restore Scope Project",
+        distribution_name="restore-scope-project",
+        package_name="restore_scope_project",
+        author_name="Joan Clarke",
+        initial_version="0.8.0",
+        project_scope=long_scope,
+        license_id="MIT",
+    )
+
+    bootstrap_template(workspace_root=workspace, answers=answers, dry_run=False)
+
+    template_metadata_path = (
+        workspace / "src" / "restore_scope_project" / "domain" / "template_metadata.py"
+    )
+    template_metadata_content = template_metadata_path.read_text(encoding="utf-8")
+    scope_midpoint = len(long_scope) // 2
+    multiline_scope_summary = (
+        "scope_summary=(\n"
+        f"            {long_scope[:scope_midpoint]!r}\n"
+        f"            {long_scope[scope_midpoint:]!r}\n"
+        "        ),"
+    )
+    template_metadata_path.write_text(
+        template_metadata_content.replace(
+            f'scope_summary="{long_scope}",',
+            multiline_scope_summary,
+        ),
+        encoding="utf-8",
+    )
+
+    _restore_public_template_state(workspace)
+
+    restored_template_metadata_path = (
+        workspace / "src" / _template_package_name() / "domain" / "template_metadata.py"
+    )
+
+    assert _read_scope_summary_from_template_metadata(restored_template_metadata_path) == (
+        _template_project_scope()
+    )
 
 
 def test_bootstrap_cli_reinstalls_for_the_new_package_name(
