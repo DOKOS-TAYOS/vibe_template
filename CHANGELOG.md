@@ -16,6 +16,7 @@ All notable changes to this template are documented in this file.
 
 ### Fixed
 
+- Bootstrap now wraps long `scope_summary` metadata into stable multiline Python literals and leaves `THIRD_PARTY_LICENSES` out of identity rewrites, so fresh bootstraps stay Ruff-clean and license inventories only change through the dedicated regeneration flow.
 - `THIRD_PARTY_LICENSES` generation now stays compact and uses the active project interpreter instead of expanding full license texts or scanning unrelated global packages.
 - Bootstrap now re-syncs the editable install after renaming the package, so the new project state is immediately usable.
 - Bootstrap now refuses to run again once the template has already been configured, including dry-run calls.
