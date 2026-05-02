@@ -2,13 +2,11 @@
 |-------------------|--------------|--------------------------------------|-----------------------------------------------------------------------|
 | Pygments          | 2.20.0       | BSD-2-Clause                         | https://pygments.org                                                  |
 | colorama          | 0.4.6        | BSD License                          | https://github.com/tartley/colorama                                   |
-| hatchling         | 1.29.0       | MIT                                  | https://hatch.pypa.io/latest/                                         |
 | iniconfig         | 2.3.0        | MIT                                  | https://github.com/pytest-dev/iniconfig                               |
 | nodeenv           | 1.10.0       | BSD License                          | https://github.com/ekalinin/nodeenv                                   |
 | packaging         | 26.2         | Apache-2.0 OR BSD-2-Clause           | https://github.com/pypa/packaging                                     |
 | pathspec          | 1.1.1        | Mozilla Public License 2.0 (MPL 2.0) | https://python-path-specification.readthedocs.io/en/latest/index.html |
 | pluggy            | 1.6.0        | MIT License                          | UNKNOWN                                                               |
-| project-name      | 0.0.0        | Other/Proprietary License            | https://example.invalid/project-name/repository                       |
 | pyright           | 1.1.409      | MIT                                  | https://github.com/RobertCraigie/pyright-python                       |
 | pytest            | 9.0.3        | MIT                                  | https://docs.pytest.org/en/latest/                                    |
 | ruff              | 0.15.12      | MIT                                  | https://docs.astral.sh/ruff                                           |

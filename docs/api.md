@@ -30,6 +30,15 @@ Returns the current `TemplateMetadata` snapshot.
 - `test`
 - `clean`
 - `licenses`
-- `demo`
+
+### CLI behavior notes
+
+- `bootstrap` is for a fresh template copy only. Once `bootstrap_required` becomes `False`, the command exits with an error instead of prompting again.
+- `quality` runs Ruff, pytest, and pyright through the active interpreter, which keeps `.venv` resolution consistent on Windows and Linux.
+- `test` runs pytest through the active interpreter.
+- `clean` removes caches and temporary artifacts, but stays conservative around `.venv`, `.git`, and inaccessible subtrees.
+- `licenses` regenerates `THIRD_PARTY_LICENSES` from the active interpreter and excludes the local template package.
+
+During template stage, `project_name` is still a placeholder package name. After bootstrap, the module path changes. The `bin/` wrappers are the stable user-facing entrypoints across that rename.
 
 Treat everything outside `src/project_name/__init__.py` and the CLI subcommands as internal implementation detail.

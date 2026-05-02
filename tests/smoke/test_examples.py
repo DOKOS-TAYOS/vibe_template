@@ -46,4 +46,4 @@ def test_cli_example_runs() -> None:
     )
 
     assert completed_process.returncode == 0
-    assert "demo" in completed_process.stdout
+    assert "Would remove" in completed_process.stdout

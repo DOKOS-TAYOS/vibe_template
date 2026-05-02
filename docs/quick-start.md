@@ -1,6 +1,8 @@
 # Quick Start
 
-## 1. Create the Environment
+Use this document only for the first start of a new project created from the template.
+
+## 1. Create the Environment and Install the Template
 
 Windows PowerShell:
 
@@ -20,26 +22,34 @@ python -m pip install --upgrade pip
 python -m pip install -e .[dev]
 ```
 
-## 2. Bootstrap the Template
+## 2. Bootstrap the Project Identity
 
-```bash
-python -m project_name.cli bootstrap
+Windows PowerShell:
+
+```powershell
+bin\bootstrap.cmd
 ```
 
-The bootstrap step asks for:
+Linux or macOS:
 
-- project title
-- distribution name
-- package name
-- author name
-- initial version
-- project scope
-- license choice
+```bash
+./bin/bootstrap.sh
+```
+
+Bootstrap asks for the project identity fields and then runs `pip install -e .[dev]` again automatically so the renamed package is ready without extra manual steps. Run it only once per fresh copy of the template.
 
 ## 3. Verify the Base
 
+Windows PowerShell:
+
+```powershell
+bin\quality.cmd
+```
+
+Linux or macOS:
+
 ```bash
-python -m project_name.cli quality
+./bin/quality.sh
 ```
 
 ## 4. Start Building

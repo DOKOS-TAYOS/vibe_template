@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -13,22 +14,47 @@ class CommandExecutionResult:
     returncode: int
 
 
+def _build_module_command(module_name: str, *args: str) -> list[str]:
+    return [sys.executable, "-m", module_name, *args]
+
+
 def build_quality_commands(include_format_fix: bool = True) -> list[list[str]]:
-    commands: list[list[str]] = [["ruff", "check", "."]]
+    commands: list[list[str]] = [_build_module_command("ruff", "check", ".")]
     if include_format_fix:
         commands[0].append("--fix")
-        commands.append(["ruff", "format", "."])
+        commands.append(_build_module_command("ruff", "format", "."))
     else:
-        commands.append(["ruff", "format", ".", "--check"])
-    commands.extend([["pytest"], ["pyright"]])
+        commands.append(_build_module_command("ruff", "format", ".", "--check"))
+    commands.extend(
+        [
+            _build_module_command("pytest"),
+            _build_module_command("pyright"),
+        ]
+    )
     return commands
 
 
 def build_test_command() -> list[str]:
-    return ["pytest"]
+    return _build_module_command("pytest")
 
 
-def build_license_command(output_file: Path) -> list[str]:
+def build_bootstrap_resync_command() -> list[str]:
+    return [
+        sys.executable,
+        "-m",
+        "pip",
+        "install",
+        "-e",
+        ".[dev]",
+    ]
+
+
+def load_distribution_name(project_root: Path) -> str:
+    pyproject_data = tomllib.loads((project_root / "pyproject.toml").read_text(encoding="utf-8"))
+    return str(pyproject_data["project"]["name"])
+
+
+def build_license_command(output_file: Path, distribution_name: str) -> list[str]:
     return [
         sys.executable,
         "-m",
@@ -37,6 +63,8 @@ def build_license_command(output_file: Path) -> list[str]:
         sys.executable,
         "--format=markdown",
         "--with-urls",
+        "--ignore-packages",
+        distribution_name,
         "--output-file",
         str(output_file),
     ]

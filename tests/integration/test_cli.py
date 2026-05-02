@@ -17,9 +17,9 @@ def _cli_env() -> dict[str, str]:
     return environment
 
 
-def test_cli_demo_command_runs_successfully() -> None:
+def test_cli_clean_dry_run_command_runs_successfully() -> None:
     completed_process = subprocess.run(
-        [sys.executable, "-m", "project_name.cli", "demo"],
+        [sys.executable, "-m", "project_name.cli", "clean", "--dry-run"],
         check=False,
         capture_output=True,
         text=True,
@@ -27,7 +27,7 @@ def test_cli_demo_command_runs_successfully() -> None:
     )
 
     assert completed_process.returncode == 0
-    assert "Template demo" in completed_process.stdout
+    assert "Would remove" in completed_process.stdout
 
 
 def test_cli_help_lists_expected_commands() -> None:
@@ -43,3 +43,4 @@ def test_cli_help_lists_expected_commands() -> None:
     assert "bootstrap" in completed_process.stdout
     assert "clean" in completed_process.stdout
     assert "licenses" in completed_process.stdout
+    assert "demo" not in completed_process.stdout

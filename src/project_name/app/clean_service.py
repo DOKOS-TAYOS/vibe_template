@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import shutil
 from dataclasses import dataclass
 from fnmatch import fnmatch
@@ -32,31 +33,62 @@ class CleanResult:
     failed_paths: tuple[Path, ...]
 
 
-def _is_inside_protected_directory(path: Path, root: Path) -> bool:
-    try:
-        relative_parts = path.relative_to(root).parts
-    except ValueError:
-        return True
-    return any(part in PROTECTED_DIRECTORIES for part in relative_parts)
+def _contains_protected_descendant(path: Path) -> bool:
+    found_inaccessible_path = False
+
+    def mark_inaccessible(error: OSError) -> None:
+        nonlocal found_inaccessible_path
+        found_inaccessible_path = True
+        del error
+
+    for _, directory_names, _ in os.walk(path, topdown=True, onerror=mark_inaccessible):
+        if any(name in PROTECTED_DIRECTORIES for name in directory_names):
+            return True
+        directory_names[:] = [
+            directory_name
+            for directory_name in directory_names
+            if directory_name not in PROTECTED_DIRECTORIES
+        ]
+    return found_inaccessible_path
+
+
+def _matches_cleanup_directory(directory_name: str) -> bool:
+    return directory_name in DIRECTORY_PATTERNS or any(
+        fnmatch(directory_name, pattern) for pattern in DIRECTORY_GLOBS
+    )
 
 
 def collect_cleanup_paths(root: Path) -> list[Path]:
     candidates: set[Path] = set()
 
-    for directory_path in root.rglob("*"):
-        if _is_inside_protected_directory(directory_path, root):
-            continue
-        if directory_path.is_dir() and (
-            directory_path.name in DIRECTORY_PATTERNS
-            or any(fnmatch(directory_path.name, pattern) for pattern in DIRECTORY_GLOBS)
-        ):
-            candidates.add(directory_path)
+    def ignore_walk_error(error: OSError) -> None:
+        del error
 
-    for pattern in FILE_PATTERNS:
-        for file_path in root.rglob(pattern):
-            if _is_inside_protected_directory(file_path, root):
+    for current_root, directory_names, file_names in os.walk(
+        root,
+        topdown=True,
+        onerror=ignore_walk_error,
+    ):
+        current_path = Path(current_root)
+        directory_names[:] = [
+            directory_name
+            for directory_name in directory_names
+            if directory_name not in PROTECTED_DIRECTORIES
+        ]
+
+        for directory_name in tuple(directory_names):
+            directory_path = current_path / directory_name
+            if not _matches_cleanup_directory(directory_name):
                 continue
-            candidates.add(file_path)
+            if _contains_protected_descendant(directory_path):
+                directory_names.remove(directory_name)
+                continue
+            candidates.add(directory_path)
+            directory_names.remove(directory_name)
+
+        for file_name in file_names:
+            if any(fnmatch(file_name, pattern) for pattern in FILE_PATTERNS):
+                candidates.add(current_path / file_name)
 
     return sorted(candidates)
 

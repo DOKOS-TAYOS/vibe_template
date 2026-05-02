@@ -10,4 +10,4 @@ def test_public_api_exposes_template_metadata() -> None:
     assert metadata.package_name == "project_name"
     assert metadata.distribution_name == "project-name"
     assert metadata.bootstrap_required is True
-    assert "bootstrap" in metadata.cli_commands
+    assert metadata.cli_commands == ("bootstrap", "quality", "test", "clean", "licenses")

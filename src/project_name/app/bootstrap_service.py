@@ -17,6 +17,10 @@ SUPPORTED_LICENSE_IDS: tuple[str, ...] = (
     "MPL-2.0",
     "Proprietary",
 )
+BOOTSTRAP_ALREADY_COMPLETED_MESSAGE = (
+    "This project has already been bootstrapped. Create a fresh copy of the template "
+    "to run bootstrap again."
+)
 TEXT_FILE_SUFFIXES: tuple[str, ...] = (
     ".py",
     ".toml",
@@ -79,6 +83,12 @@ class TemplateState:
     initial_version: str
     project_scope: str
     license_id: str
+    bootstrap_required: bool
+
+
+def bootstrap_required_for_workspace(workspace_root: Path) -> bool:
+    vibe_template_data = _load_vibe_template_data(workspace_root)
+    return bool(vibe_template_data.get("bootstrap_required", False))
 
 
 def bootstrap_template(
@@ -86,8 +96,10 @@ def bootstrap_template(
     answers: BootstrapAnswers,
     dry_run: bool = False,
 ) -> BootstrapResult:
-    validated_answers = _validate_answers(answers)
     state = _load_template_state(workspace_root)
+    if not state.bootstrap_required:
+        raise ValueError(BOOTSTRAP_ALREADY_COMPLETED_MESSAGE)
+    validated_answers = _validate_answers(answers)
     replacements = _build_replacements(state, validated_answers)
     changes = list(_collect_text_changes(workspace_root, replacements))
     changes.extend(
@@ -152,8 +164,7 @@ def _validate_answers(answers: BootstrapAnswers) -> BootstrapAnswers:
 
 
 def _load_template_state(workspace_root: Path) -> TemplateState:
-    pyproject_data = tomllib.loads((workspace_root / "pyproject.toml").read_text(encoding="utf-8"))
-    vibe_template_data: dict[str, Any] = pyproject_data["tool"]["vibe_template"]
+    vibe_template_data = _load_vibe_template_data(workspace_root)
     return TemplateState(
         project_title=str(vibe_template_data["project_title"]),
         distribution_name=str(vibe_template_data["distribution_name"]),
@@ -162,7 +173,13 @@ def _load_template_state(workspace_root: Path) -> TemplateState:
         initial_version=str(vibe_template_data["initial_version"]),
         project_scope=str(vibe_template_data["project_scope"]),
         license_id=str(vibe_template_data["license_id"]),
+        bootstrap_required=bool(vibe_template_data["bootstrap_required"]),
     )
+
+
+def _load_vibe_template_data(workspace_root: Path) -> dict[str, Any]:
+    pyproject_data = tomllib.loads((workspace_root / "pyproject.toml").read_text(encoding="utf-8"))
+    return pyproject_data["tool"]["vibe_template"]
 
 
 def _build_replacements(state: TemplateState, answers: BootstrapAnswers) -> list[tuple[str, str]]:
@@ -175,6 +192,7 @@ def _build_replacements(state: TemplateState, answers: BootstrapAnswers) -> list
         (state.project_scope, answers.project_scope),
         (state.license_id, answers.license_id),
         ("bootstrap_required = true", "bootstrap_required = false"),
+        ("bootstrap_required=True", "bootstrap_required=False"),
     ]
 
 

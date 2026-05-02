@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+from os import PathLike
 from pathlib import Path
 
 import pytest
@@ -38,6 +40,41 @@ def test_collect_cleanup_paths_matches_generated_pytest_cache_directories(temp_d
     cleanup_paths = collect_cleanup_paths(temp_dir)
 
     assert generated_cache_dir in cleanup_paths
+
+
+def test_collect_cleanup_paths_skips_directories_that_contain_nested_virtual_environments(
+    temp_dir: Path,
+) -> None:
+    artifact_dir = temp_dir / "test-artifacts"
+    nested_venv = artifact_dir / ".venv" / "Scripts"
+    nested_venv.mkdir(parents=True)
+
+    cleanup_paths = collect_cleanup_paths(temp_dir)
+
+    assert artifact_dir not in cleanup_paths
+
+
+def test_collect_cleanup_paths_skips_permission_denied_subtrees(
+    temp_dir: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    artifact_dir = temp_dir / "test-artifacts"
+    artifact_dir.mkdir()
+    accessible_cache_dir = temp_dir / ".pytest_cache"
+    accessible_cache_dir.mkdir()
+    original_scandir = os.scandir
+
+    def patched_scandir(path: str | PathLike[str]) -> object:
+        if Path(path) == artifact_dir:
+            raise PermissionError(f"blocked: {path}")
+        return original_scandir(path)
+
+    monkeypatch.setattr(os, "scandir", patched_scandir)
+
+    cleanup_paths = collect_cleanup_paths(temp_dir)
+
+    assert accessible_cache_dir in cleanup_paths
+    assert artifact_dir not in cleanup_paths
 
 
 def test_run_clean_reports_permission_errors_and_continues(

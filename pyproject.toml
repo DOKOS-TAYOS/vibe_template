@@ -14,7 +14,6 @@ keywords = ["python", "template", "vibe-coding", "software"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Developers",
-    "License :: Other/Proprietary License",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
@@ -27,7 +26,6 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = [
-    "hatchling>=1.27.0",
     "pip-licenses>=5.0.0",
     "pyright>=1.1.408",
     "pytest>=8.4.2",
@@ -37,17 +35,11 @@ dev = [
 [project.scripts]
 project-name = "project_name.cli:main"
 
-[project.urls]
-Documentation = "https://example.invalid/project-name/docs"
-Issues = "https://example.invalid/project-name/issues"
-Repository = "https://example.invalid/project-name/repository"
-
 [tool.hatch.build.targets.wheel]
 packages = ["src/project_name"]
 
 [tool.pytest.ini_options]
 addopts = "-ra --strict-markers"
-cache_dir = "pytest-cache"
 pythonpath = ["src"]
 testpaths = ["tests"]
 
@@ -55,6 +47,7 @@ testpaths = ["tests"]
 extend-exclude = [
     ".tmp",
     ".venv",
+    ".pytest_cache",
     "pytest-cache",
     "pytest-temp",
     "pytest-cache-files-*",
