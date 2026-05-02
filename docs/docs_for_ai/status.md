@@ -1,7 +1,7 @@
 # Status
 
 - Phase: Education template baseline ready for course authoring
-- Last update: the template was repositioned around `course/`, learner-facing docs, and course-oriented bootstrap language while keeping the Python support layer minimal
+- Last update: the template was repositioned around `course/`, learner-facing docs, course-oriented bootstrap language, and smoke-safe long identity replacements while keeping the Python support layer minimal
 - Next step: Run bootstrap once and replace the sample modules in `course/` with your real lessons
 - Blockers: None in template state
 - License: MIT

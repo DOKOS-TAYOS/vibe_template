@@ -3,6 +3,8 @@ from __future__ import annotations
 import argparse
 import ast
 import shutil
+import subprocess
+import sys
 import tomllib
 from pathlib import Path
 from subprocess import CompletedProcess
@@ -319,6 +321,36 @@ def test_bootstrap_template_wraps_long_scope_summary_in_metadata_file(
     assert _read_scope_summary_from_template_metadata(template_metadata_path) == long_scope
 
 
+def test_bootstrap_template_stays_ruff_clean_for_long_course_identity_values(
+    temp_dir: Path,
+) -> None:
+    source_root = Path(__file__).resolve().parents[2]
+    workspace = temp_dir / "workspace"
+    _copy_template_workspace(source_root, workspace)
+
+    answers = BootstrapAnswers(
+        project_title="CI Education Template Smoke",
+        distribution_name="ci-education-template-smoke",
+        package_name="ci_education_template_smoke",
+        author_name="CI Educator",
+        initial_version="0.1.0",
+        project_scope="Fresh course template smoke validation.",
+        license_id="MIT",
+    )
+
+    bootstrap_template(workspace_root=workspace, answers=answers, dry_run=False)
+
+    completed_process = subprocess.run(
+        [sys.executable, "-m", "ruff", "check", "."],
+        check=False,
+        capture_output=True,
+        text=True,
+        cwd=workspace,
+    )
+
+    assert completed_process.returncode == 0, completed_process.stdout + completed_process.stderr
+
+
 def test_bootstrap_template_dry_run_leaves_files_unchanged(temp_dir: Path) -> None:
     source_root = Path(__file__).resolve().parents[2]
     workspace = temp_dir / "workspace"
@@ -503,9 +535,12 @@ def test_bootstrap_cli_reinstalls_for_the_new_package_name(
     workspace = temp_dir / "workspace"
     workspace.mkdir()
     _write_bootstrap_required_pyproject(workspace, True)
+    current_package_name = "project_name"
     planned_change = PlannedChange(
         path=workspace / "src" / "bootstrap_cli_project",
-        description="Rename package directory from project_name to bootstrap_cli_project",
+        description=(
+            f"Rename package directory from {current_package_name} to bootstrap_cli_project"
+        ),
     )
 
     def fake_bootstrap_template(

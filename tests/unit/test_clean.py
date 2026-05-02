@@ -90,7 +90,10 @@ def test_run_clean_reports_permission_errors_and_continues(
         del ignore_errors
         raise PermissionError(f"blocked: {path}")
 
-    monkeypatch.setattr("project_name.app.clean_service.shutil.rmtree", failing_rmtree)
+    monkeypatch.setattr(
+        "project_name.app.clean_service.shutil.rmtree",
+        failing_rmtree,
+    )
 
     result = run_clean(temp_dir)
 

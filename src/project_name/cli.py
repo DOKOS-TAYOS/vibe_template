@@ -85,7 +85,10 @@ def _handle_bootstrap(args: argparse.Namespace) -> int:
     if not bootstrap_required_for_workspace(project_root):
         print(BOOTSTRAP_ALREADY_COMPLETED_MESSAGE)
         return 1
-    distribution_name = args.distribution_name or _prompt("Distribution name", "project-name")
+    distribution_name = args.distribution_name or _prompt(
+        "Distribution name",
+        "project-name",
+    )
     if args.package_name:
         package_name = args.package_name
     elif args.distribution_name:
