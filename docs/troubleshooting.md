@@ -29,6 +29,16 @@ The command only lists third-party packages from the active interpreter. If the 
 - confirm the package imports from `src`
 - keep function typing explicit
 
+## `security` Fails With `CERTIFICATE_VERIFY_FAILED`
+
+The security command contacts the Python vulnerability service over HTTPS. If it fails with `CERTIFICATE_VERIFY_FAILED`, the local Python environment cannot validate the network certificate chain.
+
+- confirm the system date and time are correct
+- update Python certificates or corporate proxy trust settings
+- if your organization uses a custom CA bundle, set `REQUESTS_CA_BUNDLE` to that certificate file before running the command
+
+Do not bypass certificate validation to make the audit pass. Fix the trust configuration instead.
+
 ## Cleanup Removed Too Much
 
 The cleanup command should never touch `.venv`. If it does, stop using that version of the script and add a regression test before changing the cleanup rules.

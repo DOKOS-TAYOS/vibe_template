@@ -12,9 +12,17 @@ All notable changes to this template are documented in this file.
 - Human documentation, AI documentation, examples, and CI defaults.
 - TDD-oriented tests for bootstrap, cleanup, CLI, public API, and examples.
 - A reusable `scripts/bootstrap_smoke.py` helper that creates a fresh template copy, bootstraps it non-interactively, and runs the full quality flow.
+- Dependabot configuration for Python tooling and GitHub Actions so derived projects keep receiving update pull requests.
+- A Security workflow with dependency review and `pip-audit` checks, with CodeQL left to GitHub default setup to avoid advanced-setup conflicts.
+- A `security` CLI command for local Python dependency vulnerability audits.
+- Dependabot-suggested minimum versions for the Python dev tooling group and dependency review action.
 
 ### Fixed
 
+- Bootstrap now removes the template-only test harness self-test from derived projects, avoiding a fragile post-bootstrap test that depended on local temporary directory behavior.
+- Security CI no longer uses an advanced CodeQL workflow, so repositories with GitHub CodeQL default setup enabled can process code scanning normally.
+- The local `security` command now audits a generated dependency freeze that excludes the local project package, avoiding false CI failures for unpublished template packages.
+- Bootstrap tests now ignore repo-local `.pytest_cache` folders when copying a template workspace, avoiding Windows permission failures in reused worktrees.
 - Bootstrap now wraps long `scope_summary` metadata into stable multiline Python literals and leaves `THIRD_PARTY_LICENSES` out of identity rewrites, so fresh bootstraps stay Ruff-clean and license inventories only change through the dedicated regeneration flow.
 - `THIRD_PARTY_LICENSES` generation now stays compact and uses the active project interpreter instead of expanding full license texts or scanning unrelated global packages.
 - Bootstrap now re-syncs the editable install after renaming the package, so the new project state is immediately usable.
@@ -41,3 +49,4 @@ All notable changes to this template are documented in this file.
 - Pytest returned to its default cache naming while Ruff cleanup rules were updated for the standard `.pytest_cache` directory.
 - CI now includes a dedicated fresh-copy template smoke job on Windows and Ubuntu, using Python 3.12 to validate the real bootstrap-plus-quality flow end to end.
 - The template repository now ships with a real MIT license and `Alejandro Mata Ali` as the template author, while still leaving bootstrap in charge of project-specific identity.
+- CI workflows now use minimal read-only token permissions, non-persisted checkout credentials, and current official GitHub Actions major versions.
