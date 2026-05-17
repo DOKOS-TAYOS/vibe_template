@@ -13,8 +13,9 @@ Use this template to push AI agents toward the best code quality possible: typed
 5. Write down the approach before implementing non-trivial changes.
 6. Keep the library layer as the center of the system.
 7. Add or update tests before changing behavior.
-8. Update `CHANGELOG.md` for meaningful changes.
-9. Update these AI docs when workflow, architecture, or constraints change.
+8. Run the security audit after dependency, workflow, or release-facing changes.
+9. Update `CHANGELOG.md` for meaningful changes.
+10. Update these AI docs when workflow, architecture, or constraints change.
 
 ## Non-Negotiable Rules
 
@@ -29,6 +30,7 @@ Use this template to push AI agents toward the best code quality possible: typed
 - Treat `bootstrap` as a one-time setup command. If it already ran, do not try to re-run it.
 - Treat `docs/api.md` and the example scripts as contract documentation.
 - Keep the AI docs compact by strengthening the existing files instead of creating markdown sprawl.
+- Keep Dependabot, dependency review, `pip-audit`, CodeQL default setup guidance, and secret-scanning guidance intact unless the derived project has a stronger security baseline.
 
 ## Completion Checklist
 
@@ -38,9 +40,10 @@ Before claiming a Python task is complete:
 2. Run `ruff format .`
 3. Run `pytest`
 4. Run `pyright`
-5. Re-read any touched docs or contract text for consistency
-6. Update `docs/docs_for_ai/status.md`
-7. Update `CHANGELOG.md`
+5. Run `python scripts/run_template_command.py security` when dependencies or GitHub workflows changed
+6. Re-read any touched docs or contract text for consistency
+7. Update `docs/docs_for_ai/status.md`
+8. Update `CHANGELOG.md`
 
 ## AI Handoff Checklist
 
