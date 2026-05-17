@@ -19,7 +19,7 @@ All notable changes to this template are documented in this file.
 
 - Bootstrap now removes the template-only test harness self-test from derived projects, avoiding a fragile post-bootstrap test that depended on local temporary directory behavior.
 - Security CI no longer uses an advanced CodeQL workflow, so repositories with GitHub CodeQL default setup enabled can process code scanning normally.
-- The local `security` command no longer treats the editable project package as a fatal skipped dependency during strict `pip-audit` runs.
+- The local `security` command now audits a generated dependency freeze that excludes the local project package, avoiding false CI failures for unpublished template packages.
 - Bootstrap now wraps long `scope_summary` metadata into stable multiline Python literals and leaves `THIRD_PARTY_LICENSES` out of identity rewrites, so fresh bootstraps stay Ruff-clean and license inventories only change through the dedicated regeneration flow.
 - `THIRD_PARTY_LICENSES` generation now stays compact and uses the active project interpreter instead of expanding full license texts or scanning unrelated global packages.
 - Bootstrap now re-syncs the editable install after renaming the package, so the new project state is immediately usable.

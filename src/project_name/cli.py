@@ -17,10 +17,10 @@ from .app.tooling_service import (
     build_bootstrap_resync_command,
     build_license_command,
     build_quality_commands,
-    build_security_commands,
     build_test_command,
     load_distribution_name,
     run_commands,
+    run_security_audit,
 )
 from .infrastructure.process_runner import run_process
 
@@ -174,7 +174,7 @@ def _handle_licenses(args: argparse.Namespace) -> int:
 
 def _handle_security(args: argparse.Namespace) -> int:
     del args
-    results = run_commands(build_security_commands(), root=Path.cwd())
+    results = run_security_audit(root=Path.cwd())
     for result in results:
         print(f"{' '.join(result.command)} -> {result.returncode}")
         if result.returncode != 0:
