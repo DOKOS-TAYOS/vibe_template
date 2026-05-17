@@ -23,7 +23,7 @@ def test_security_workflow_runs_supply_chain_checks_without_advanced_codeql() ->
 
     assert workflow_path.exists()
     workflow_content = workflow_path.read_text(encoding="utf-8")
-    assert "actions/dependency-review-action@v4" in workflow_content
+    assert "actions/dependency-review-action@v5" in workflow_content
     assert "python scripts/run_template_command.py security" in workflow_content
     assert "python -m pip install -e .[dev]" in workflow_content
     assert "persist-credentials: false" in workflow_content

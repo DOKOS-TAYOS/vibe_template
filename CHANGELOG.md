@@ -14,6 +14,7 @@ All notable changes to this template are documented in this file.
 - Dependabot configuration for Python tooling and GitHub Actions so derived projects keep receiving update pull requests.
 - A Security workflow with dependency review and `pip-audit` checks, with CodeQL left to GitHub default setup to avoid advanced-setup conflicts.
 - A `security` CLI command for local Python dependency vulnerability audits.
+- Dependabot-suggested minimum versions for the Python dev tooling group and dependency review action.
 
 ### Fixed
 

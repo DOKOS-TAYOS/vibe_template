@@ -30,7 +30,7 @@
 | pytest                  | 9.0.3        | MIT                                  | https://docs.pytest.org/en/latest/                                    |
 | requests                | 2.34.2       | Apache Software License              | https://github.com/psf/requests                                       |
 | rich                    | 15.0.0       | MIT License                          | https://github.com/Textualize/rich                                    |
-| ruff                    | 0.15.12      | MIT                                  | https://docs.astral.sh/ruff                                           |
+| ruff                    | 0.15.13      | MIT                                  | https://docs.astral.sh/ruff                                           |
 | sortedcontainers        | 2.4.0        | Apache Software License              | http://www.grantjenks.com/docs/sortedcontainers/                      |
 | tomli                   | 2.4.1        | MIT                                  | https://github.com/hukkin/tomli                                       |
 | tomli_w                 | 1.2.0        | MIT License                          | https://github.com/hukkin/tomli-w                                     |
