@@ -53,7 +53,6 @@ def test_security_commands_run_dependency_audit() -> None:
             "-m",
             "pip_audit",
             "--strict",
-            "--skip-editable",
             "--cache-dir",
             str(Path(".tmp") / "pip-audit-cache"),
             "--progress-spinner",

@@ -41,7 +41,6 @@ def build_security_commands(cache_dir: Path = PIP_AUDIT_CACHE_DIR) -> list[list[
         _build_module_command(
             "pip_audit",
             "--strict",
-            "--skip-editable",
             "--cache-dir",
             str(cache_dir),
             "--progress-spinner",

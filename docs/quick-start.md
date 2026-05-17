@@ -54,7 +54,7 @@ Linux or macOS:
 python scripts/run_template_command.py security
 ```
 
-The security command checks installed Python packages with `pip-audit`. GitHub also runs the same dependency audit, dependency review, and CodeQL through `.github/workflows/security.yml`.
+The security command checks installed Python packages with `pip-audit`. GitHub also runs the same dependency audit and dependency review through `.github/workflows/security.yml`. Keep CodeQL enabled through GitHub's default setup instead of adding an advanced CodeQL workflow.
 
 ## 4. Start Building
 

@@ -25,7 +25,7 @@ Use this template to build software projects with a stable Python core, minimal 
 - Prefer the stable wrappers in `bin/` while the template package name is still provisional.
 - Treat `bootstrap` as a one-time setup command. If it already ran, do not try to re-run it.
 - Treat `docs/api.md` and the example scripts as contract documentation.
-- Keep Dependabot, CodeQL, dependency review, and secret-scanning guidance intact unless the derived project has a stronger security baseline.
+- Keep Dependabot, dependency review, CodeQL default setup guidance, and secret-scanning guidance intact unless the derived project has a stronger security baseline.
 
 ## Completion Checklist
 

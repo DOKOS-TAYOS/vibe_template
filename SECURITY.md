@@ -13,7 +13,7 @@ Use a private reporting channel defined by the maintainers after bootstrap. Do n
 Projects created from this template keep these tracked security defaults:
 
 - Dependabot version updates for Python dependency metadata and GitHub Actions.
-- A Security workflow with dependency review, CodeQL, and `pip-audit`.
+- A Security workflow with dependency review and `pip-audit`.
 - Read-only GitHub Actions token permissions unless a job explicitly needs more.
 - Checkout steps that do not persist credentials after the repository is fetched.
 
@@ -23,7 +23,9 @@ Some GitHub security features are repository settings, not files copied by a tem
 
 - Dependabot alerts and Dependabot security updates.
 - Dependency graph.
-- Code scanning alerts.
+- Code scanning alerts with CodeQL default setup.
 - Secret scanning and push protection.
 
 If a project stores credentials or handles sensitive data, add project-specific threat modeling and environment hardening before production use.
+
+Do not add a CodeQL advanced workflow while GitHub CodeQL default setup is enabled. GitHub rejects those uploads because the two setup modes are mutually exclusive for the same repository.

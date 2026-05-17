@@ -34,6 +34,7 @@ Use direct `python -m <package>.cli ...` commands when you specifically want the
 - Keep `.github/workflows/security.yml` unless the project has a stronger organization-level security workflow.
 - Run `python scripts\run_template_command.py security` on Windows or `python scripts/run_template_command.py security` on Linux/macOS after dependency changes.
 - Keep GitHub repository settings for Dependabot alerts, Dependabot security updates, dependency graph, code scanning, secret scanning, and push protection enabled when available.
+- Use GitHub's CodeQL default setup for code scanning. Do not add an advanced CodeQL workflow unless default setup is disabled first.
 
 ## Documentation Responsibilities
 
