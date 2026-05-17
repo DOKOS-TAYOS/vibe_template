@@ -7,6 +7,7 @@ from project_name.app.tooling_service import (
     build_bootstrap_resync_command,
     build_license_command,
     build_quality_commands,
+    build_security_commands,
     build_test_command,
 )
 
@@ -40,6 +41,26 @@ def test_license_command_generates_compact_inventory() -> None:
         "project-name",
         "--output-file",
         "THIRD_PARTY_LICENSES",
+    ]
+
+
+def test_security_commands_run_dependency_audit() -> None:
+    commands = build_security_commands()
+
+    assert commands == [
+        [
+            sys.executable,
+            "-m",
+            "pip_audit",
+            "--strict",
+            "--skip-editable",
+            "--cache-dir",
+            str(Path(".tmp") / "pip-audit-cache"),
+            "--progress-spinner",
+            "off",
+            "--timeout",
+            "30",
+        ]
     ]
 
 

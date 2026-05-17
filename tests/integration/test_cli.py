@@ -43,4 +43,5 @@ def test_cli_help_lists_expected_commands() -> None:
     assert "bootstrap" in completed_process.stdout
     assert "clean" in completed_process.stdout
     assert "licenses" in completed_process.stdout
+    assert "security" in completed_process.stdout
     assert "demo" not in completed_process.stdout

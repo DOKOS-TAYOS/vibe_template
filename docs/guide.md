@@ -18,6 +18,7 @@
 6. Run the smallest relevant test command.
 7. Refactor while staying green.
 8. Before finishing, run the full quality flow.
+9. When dependencies, workflows, or release-facing code change, run the security audit command too.
 
 ## Stable Entry Points
 
@@ -26,6 +27,13 @@
 - `bin\clean.cmd` or `./bin/clean.sh`
 
 Use direct `python -m <package>.cli ...` commands when you specifically want the module-level entrypoint after bootstrap.
+
+## Security Maintenance
+
+- Keep `.github/dependabot.yml` in derived projects so Python tooling and GitHub Actions continue receiving update pull requests.
+- Keep `.github/workflows/security.yml` unless the project has a stronger organization-level security workflow.
+- Run `python scripts\run_template_command.py security` on Windows or `python scripts/run_template_command.py security` on Linux/macOS after dependency changes.
+- Keep GitHub repository settings for Dependabot alerts, Dependabot security updates, dependency graph, code scanning, secret scanning, and push protection enabled when available.
 
 ## Documentation Responsibilities
 

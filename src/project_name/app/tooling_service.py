@@ -7,6 +7,8 @@ from pathlib import Path
 
 from ..infrastructure.process_runner import run_process
 
+PIP_AUDIT_CACHE_DIR = Path(".tmp") / "pip-audit-cache"
+
 
 @dataclass(frozen=True, slots=True)
 class CommandExecutionResult:
@@ -32,6 +34,22 @@ def build_quality_commands(include_format_fix: bool = True) -> list[list[str]]:
         ]
     )
     return commands
+
+
+def build_security_commands(cache_dir: Path = PIP_AUDIT_CACHE_DIR) -> list[list[str]]:
+    return [
+        _build_module_command(
+            "pip_audit",
+            "--strict",
+            "--skip-editable",
+            "--cache-dir",
+            str(cache_dir),
+            "--progress-spinner",
+            "off",
+            "--timeout",
+            "30",
+        )
+    ]
 
 
 def build_test_command() -> list[str]:

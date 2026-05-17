@@ -12,6 +12,7 @@ Use this template to build software projects with a stable Python core, minimal 
 4. Add or update tests before changing behavior.
 5. Update `CHANGELOG.md` for meaningful changes.
 6. Update these AI docs when workflow, architecture, or constraints change.
+7. Run the security audit after dependency, workflow, or release-facing changes.
 
 ## Non-Negotiable Rules
 
@@ -24,6 +25,7 @@ Use this template to build software projects with a stable Python core, minimal 
 - Prefer the stable wrappers in `bin/` while the template package name is still provisional.
 - Treat `bootstrap` as a one-time setup command. If it already ran, do not try to re-run it.
 - Treat `docs/api.md` and the example scripts as contract documentation.
+- Keep Dependabot, CodeQL, dependency review, and secret-scanning guidance intact unless the derived project has a stronger security baseline.
 
 ## Completion Checklist
 
@@ -33,8 +35,9 @@ Before claiming a Python task is complete:
 2. Run `ruff format .`
 3. Run `pytest`
 4. Run `pyright`
-5. Update `docs/docs_for_ai/status.md`
-6. Update `CHANGELOG.md`
+5. Run `python scripts/run_template_command.py security` when dependencies or GitHub workflows changed
+6. Update `docs/docs_for_ai/status.md`
+7. Update `CHANGELOG.md`
 
 ## AI Handoff Checklist
 

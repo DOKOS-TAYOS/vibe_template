@@ -30,6 +30,7 @@ Returns the current `TemplateMetadata` snapshot.
 - `test`
 - `clean`
 - `licenses`
+- `security`
 
 ### CLI behavior notes
 
@@ -38,6 +39,7 @@ Returns the current `TemplateMetadata` snapshot.
 - `test` runs pytest through the active interpreter.
 - `clean` removes caches and temporary artifacts, but stays conservative around `.venv`, `.git`, and inaccessible subtrees.
 - `licenses` regenerates `THIRD_PARTY_LICENSES` from the active interpreter and excludes the local template package.
+- `security` runs `pip-audit` against the active environment and fails on known vulnerable packages.
 
 During template stage, `project_name` is still a placeholder package name. After bootstrap, the module path changes. The `bin/` wrappers are the stable user-facing entrypoints across that rename.
 
