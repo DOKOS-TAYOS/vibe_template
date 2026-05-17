@@ -43,6 +43,17 @@ This template repository itself is published under MIT. Bootstrap can keep that 
 - stable wrappers for bootstrap, quality, and clean
 - short human docs plus a low-token AI fast path
 - CI on Windows and Ubuntu with Python 3.12, plus a Windows fresh-copy bootstrap smoke run
+- Dependabot, dependency review, Python dependency auditing, and GitHub security-setting guidance under `.github`
+
+## Security Defaults
+
+The template ships GitHub security configuration as tracked files, so new projects created from it keep the same baseline:
+
+- `.github/dependabot.yml` keeps Python tooling and GitHub Actions updated.
+- `.github/workflows/security.yml` runs dependency review on pull requests and `pip-audit`.
+- CodeQL is intentionally left to GitHub's default setup, because advanced CodeQL workflows conflict with repositories where default setup is already enabled.
+- CI uses read-only `GITHUB_TOKEN` permissions and disables persisted checkout credentials.
+- `SECURITY.md` explains which GitHub repository settings still need to be enabled for each derived project, including GitHub code scanning default setup and secret scanning.
 
 ## More Docs
 

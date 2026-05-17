@@ -11,7 +11,8 @@ Use this template to ship typed Python changes with the smallest reasonable toke
 3. Use targeted search before opening whole files.
 4. Add or update a test before changing behavior.
 5. Use `quality` while iterating and `quality --full` only when the change is risky, user-facing, or about to be pushed or merged.
-6. Update `CHANGELOG.md` and `docs/docs_for_ai/status.md` when the template meaningfully changes.
+6. Run the security audit after dependency, workflow, or release-facing changes.
+7. Update `CHANGELOG.md` and `docs/docs_for_ai/status.md` when the template meaningfully changes.
 
 ## Non-Negotiable Rules
 
@@ -26,6 +27,7 @@ Use this template to ship typed Python changes with the smallest reasonable toke
 - Treat `bootstrap` as a one-time setup command. If it already ran, do not try to re-run it.
 - Do not remove `.venv` or clean it as part of project cleanup.
 - Treat `docs/api.md` and the example scripts as contract documentation.
+- Keep Dependabot, dependency review, `pip-audit`, CodeQL default setup guidance, and secret-scanning guidance intact unless the derived project has a stronger security baseline.
 
 ## Completion Checklist
 
@@ -35,8 +37,9 @@ Before claiming a Python task is complete:
 2. Run `ruff format .`
 3. Run the smallest relevant test command for the change
 4. Run `pytest` and `pyright` only when the change is risky, contract-level, or about to be pushed or merged
-5. Update `docs/docs_for_ai/status.md`
-6. Update `CHANGELOG.md`
+5. Run `python scripts/run_template_command.py security` when dependencies or GitHub workflows changed
+6. Update `docs/docs_for_ai/status.md`
+7. Update `CHANGELOG.md`
 
 ## AI Handoff Checklist
 

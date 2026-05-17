@@ -20,6 +20,7 @@ from .app.tooling_service import (
     build_test_command,
     load_distribution_name,
     run_commands,
+    run_security_audit,
 )
 from .infrastructure.process_runner import run_process
 
@@ -38,6 +39,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _handle_clean(args)
     if args.command == "licenses":
         return _handle_licenses(args)
+    if args.command == "security":
+        return _handle_security(args)
     parser.print_help()
     return 1
 
@@ -89,6 +92,11 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Regenerate THIRD_PARTY_LICENSES with pip-licenses.",
     )
     licenses_parser.add_argument("--output", default="THIRD_PARTY_LICENSES")
+
+    subparsers.add_parser(
+        "security",
+        help="Run dependency vulnerability checks.",
+    )
     return parser
 
 
@@ -174,6 +182,16 @@ def _handle_licenses(args: argparse.Namespace) -> int:
         root=project_root,
     )
     return completed_process.returncode
+
+
+def _handle_security(args: argparse.Namespace) -> int:
+    del args
+    results = run_security_audit(root=Path.cwd())
+    for result in results:
+        print(f"{' '.join(result.command)} -> {result.returncode}")
+        if result.returncode != 0:
+            return result.returncode
+    return 0
 
 
 def _prompt(label: str, default: str | None = None) -> str:

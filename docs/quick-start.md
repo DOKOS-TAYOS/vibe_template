@@ -44,18 +44,24 @@ Windows PowerShell:
 
 ```powershell
 bin\quality.cmd
+python scripts\run_template_command.py security
 ```
 
 Linux or macOS:
 
 ```bash
 ./bin/quality.sh
+python scripts/run_template_command.py security
 ```
 
-This cheap default runs Ruff only. When you want the complete verification pass, run:
+The cheap default runs Ruff only. The security command checks installed Python packages with `pip-audit`.
+
+When you want the complete verification pass, run:
 
 - `bin\quality.cmd --full` on Windows
 - `./bin/quality.sh --full` on Linux or macOS
+
+GitHub also runs the dependency audit and dependency review through `.github/workflows/security.yml`. Keep CodeQL enabled through GitHub's default setup instead of adding an advanced CodeQL workflow.
 
 ## 4. Start Building
 
@@ -65,3 +71,4 @@ This cheap default runs Ruff only. When you want the complete verification pass,
 - use `quality --full` before push, merge, or risky behavior changes
 - update `CHANGELOG.md`
 - update `docs/docs_for_ai/status.md`
+- keep GitHub Dependabot alerts, security updates, secret scanning, and code scanning enabled for the new repository
