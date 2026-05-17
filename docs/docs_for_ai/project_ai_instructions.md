@@ -11,8 +11,9 @@ Use this template to build simple technical courses with a clear learner path, M
 3. Treat `course/` as the default source of truth for course content.
 4. Keep the Python layer small and supportive unless the task clearly needs more.
 5. Add or update tests before changing behavior.
-6. Update `CHANGELOG.md` for meaningful changes.
-7. Update these AI docs when workflow, architecture, or constraints change.
+6. Run the security audit after dependency, workflow, or release-facing changes.
+7. Update `CHANGELOG.md` for meaningful changes.
+8. Update these AI docs when workflow, architecture, or constraints change.
 
 ## Non-Negotiable Rules
 
@@ -27,6 +28,7 @@ Use this template to build simple technical courses with a clear learner path, M
 - Treat `bootstrap` as a one-time setup command. If it already ran, do not try to re-run it.
 - Treat `docs/api.md` and the example scripts as contract documentation.
 - Use AI as backstage support. Do not make the course depend on prompt-heavy flows when plain Markdown is enough.
+- Keep Dependabot, dependency review, `pip-audit`, CodeQL default setup guidance, and secret-scanning guidance intact unless the derived project has a stronger security baseline.
 
 ## Completion Checklist
 
@@ -36,8 +38,9 @@ Before claiming a Python task is complete:
 2. Run `ruff format .`
 3. Run `pytest`
 4. Run `pyright`
-5. Update `docs/docs_for_ai/status.md`
-6. Update `CHANGELOG.md`
+5. Run `python scripts/run_template_command.py security` when dependencies or GitHub workflows changed
+6. Update `docs/docs_for_ai/status.md`
+7. Update `CHANGELOG.md`
 
 ## AI Handoff Checklist
 

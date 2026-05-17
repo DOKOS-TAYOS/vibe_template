@@ -21,4 +21,11 @@ def test_public_api_exposes_template_metadata() -> None:
     assert metadata.project_title == str(vibe_template_data["project_title"])
     assert metadata.bootstrap_required is bool(vibe_template_data["bootstrap_required"])
     assert metadata.scope_summary == str(vibe_template_data["project_scope"])
-    assert metadata.cli_commands == ("bootstrap", "quality", "test", "clean", "licenses")
+    assert metadata.cli_commands == (
+        "bootstrap",
+        "quality",
+        "test",
+        "clean",
+        "licenses",
+        "security",
+    )

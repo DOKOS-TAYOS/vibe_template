@@ -95,6 +95,7 @@ def _copy_template_workspace(source_root: Path, workspace: Path) -> None:
             ".venv",
             "__pycache__",
             ".tmp",
+            ".pytest_cache",
             "pytest-cache",
             "pytest-temp",
             "test-artifacts",
@@ -250,6 +251,7 @@ def test_bootstrap_template_updates_metadata_and_package_name(temp_dir: Path) ->
     assert "example.invalid" not in pyproject_content
     assert "Pending" not in readme_content
     assert "bootstrap_required=False" in template_metadata_content
+    assert not (workspace / "tests" / "unit" / "test_test_harness.py").exists()
 
 
 def test_bootstrap_template_wraps_long_scope_summary_in_metadata_file(

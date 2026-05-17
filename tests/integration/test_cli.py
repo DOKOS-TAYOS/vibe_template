@@ -44,4 +44,5 @@ def test_cli_help_lists_expected_commands() -> None:
     assert "clean" in completed_process.stdout
     assert "course" in completed_process.stdout.lower()
     assert "licenses" in completed_process.stdout
+    assert "security" in completed_process.stdout
     assert "demo" not in completed_process.stdout

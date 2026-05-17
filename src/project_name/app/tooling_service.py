@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+import subprocess
 import sys
 import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 
 from ..infrastructure.process_runner import run_process
+
+PIP_AUDIT_CACHE_DIR = Path(".tmp") / "pip-audit-cache"
+SECURITY_REQUIREMENTS_PATH = Path(".tmp") / "pip-audit-requirements.txt"
 
 
 @dataclass(frozen=True, slots=True)
@@ -32,6 +36,48 @@ def build_quality_commands(include_format_fix: bool = True) -> list[list[str]]:
         ]
     )
     return commands
+
+
+def build_security_freeze_command(distribution_name: str) -> list[str]:
+    return _build_module_command(
+        "pip",
+        "list",
+        "--format=freeze",
+        "--exclude-editable",
+        "--exclude",
+        distribution_name,
+    )
+
+
+def build_security_audit_command(
+    requirements_file: Path = SECURITY_REQUIREMENTS_PATH,
+    cache_dir: Path = PIP_AUDIT_CACHE_DIR,
+) -> list[str]:
+    return _build_module_command(
+        "pip_audit",
+        "--requirement",
+        str(requirements_file),
+        "--strict",
+        "--no-deps",
+        "--disable-pip",
+        "--cache-dir",
+        str(cache_dir),
+        "--progress-spinner",
+        "off",
+        "--timeout",
+        "30",
+    )
+
+
+def build_security_commands(
+    distribution_name: str,
+    requirements_file: Path = SECURITY_REQUIREMENTS_PATH,
+    cache_dir: Path = PIP_AUDIT_CACHE_DIR,
+) -> list[list[str]]:
+    return [
+        build_security_freeze_command(distribution_name=distribution_name),
+        build_security_audit_command(requirements_file=requirements_file, cache_dir=cache_dir),
+    ]
 
 
 def build_test_command() -> list[str]:
@@ -82,4 +128,37 @@ def run_commands(commands: list[list[str]], root: Path) -> list[CommandExecution
         )
         if completed_process.returncode != 0:
             break
+    return results
+
+
+def run_security_audit(root: Path) -> list[CommandExecutionResult]:
+    distribution_name = load_distribution_name(root)
+    freeze_command, audit_command = build_security_commands(distribution_name=distribution_name)
+    requirements_path = root / SECURITY_REQUIREMENTS_PATH
+    requirements_path.parent.mkdir(parents=True, exist_ok=True)
+
+    freeze_process = subprocess.run(
+        freeze_command,
+        check=False,
+        cwd=root,
+        capture_output=True,
+        text=True,
+    )
+    results = [
+        CommandExecutionResult(
+            command=tuple(freeze_command),
+            returncode=freeze_process.returncode,
+        )
+    ]
+    if freeze_process.returncode != 0:
+        return results
+
+    requirements_path.write_text(freeze_process.stdout, encoding="utf-8")
+    completed_process = run_process(audit_command, root=root)
+    results.append(
+        CommandExecutionResult(
+            command=tuple(audit_command),
+            returncode=completed_process.returncode,
+        )
+    )
     return results

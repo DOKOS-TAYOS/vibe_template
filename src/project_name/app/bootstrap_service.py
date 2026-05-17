@@ -49,6 +49,7 @@ SKIP_DIRECTORIES: tuple[str, ...] = (
     ".ruff_cache",
     ".mypy_cache",
 )
+BOOTSTRAP_ONLY_FILES: tuple[Path, ...] = (Path("tests") / "unit" / "test_test_harness.py",)
 PYTHON_LINE_LENGTH = 100
 _TEMPLATE_METADATA_SCOPE_SUMMARY_PATTERN = re.compile(
     r"(?ms)^(?P<indent>\s*)scope_summary=.*?,(?=\n(?P=indent)cli_commands=)"
@@ -119,6 +120,7 @@ def bootstrap_template(
             description=f"Write {validated_answers.license_id} license text",
         )
     )
+    changes.extend(_collect_bootstrap_only_file_removals(workspace_root))
 
     if dry_run:
         return BootstrapResult(changed=False, changes=tuple(changes))
@@ -134,6 +136,7 @@ def bootstrap_template(
         validated_answers.license_id,
         validated_answers.author_name,
     )
+    _remove_bootstrap_only_files(workspace_root)
     return BootstrapResult(changed=bool(changes), changes=tuple(changes))
 
 
@@ -401,6 +404,24 @@ def _rename_package_directory(
     if target_path.exists():
         raise FileExistsError(f"Target package path already exists: {target_path}")
     current_path.rename(target_path)
+
+
+def _collect_bootstrap_only_file_removals(workspace_root: Path) -> list[PlannedChange]:
+    return [
+        PlannedChange(
+            path=workspace_root / relative_path,
+            description="Remove template-only test harness self-test",
+        )
+        for relative_path in BOOTSTRAP_ONLY_FILES
+        if (workspace_root / relative_path).exists()
+    ]
+
+
+def _remove_bootstrap_only_files(workspace_root: Path) -> None:
+    for relative_path in BOOTSTRAP_ONLY_FILES:
+        path = workspace_root / relative_path
+        if path.exists():
+            path.unlink()
 
 
 def _write_license_file(path: Path, license_id: str, author_name: str) -> None:
