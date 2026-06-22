@@ -47,3 +47,4 @@ All notable changes to this template are documented in this file.
 - CI now includes a dedicated fresh-copy template smoke job on Windows and Ubuntu, using Python 3.12 to validate the real bootstrap-plus-quality flow end to end.
 - The template repository now ships with a real MIT license and `Alejandro Mata Ali` as the template author, while still leaving bootstrap in charge of project-specific identity.
 - CI workflows now use minimal read-only token permissions, non-persisted checkout credentials, and current official GitHub Actions major versions.
+- CI and security workflows now use `actions/checkout@v7`, matching the current upstream major release.
