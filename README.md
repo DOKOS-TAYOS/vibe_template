@@ -2,6 +2,8 @@
 
 Stable Python template for software-oriented projects. It starts as a reusable library with a lightweight CLI, strong quality defaults, and a compact handoff path for both people and AI contributors.
 
+This is a hand-maintained in-repo bootstrap template, not a Cookiecutter (or similar) scaffolding project. See [NOTICE](NOTICE) for licensing notes.
+
 ## Official First Run
 
 This template is intentionally incomplete until bootstrap fills in:
@@ -20,7 +22,7 @@ This template is intentionally incomplete until bootstrap fills in:
 
 Bootstrap is a one-time step for a fresh copy of the template. After it finishes, treat the repository as the real project codebase and keep using the stable wrappers when you want the safest entrypoint.
 
-This template repository itself is published under MIT. Bootstrap can keep that choice or replace it for the project you create from the template.
+This template repository itself is published under MIT. Bootstrap can keep that choice or replace it for the project you create from the template. For Apache-2.0 and MPL-2.0, bootstrap writes the short notice form and points at the official full texts; details and URLs are in [NOTICE](NOTICE).
 
 ## Why the Wrappers Stay Useful
 

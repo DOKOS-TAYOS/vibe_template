@@ -432,6 +432,12 @@ def _write_license_file(path: Path, license_id: str, author_name: str) -> None:
 
 
 def _license_text(license_id: str, author_name: str, current_year: int) -> str:
+    """Return LICENSE file contents for the chosen SPDX id.
+
+    MIT and BSD-3-Clause get full conventional texts. Apache-2.0 and MPL-2.0 get
+    the short notice form with a link to the official full license text; see
+    NOTICE in the repository root.
+    """
     if license_id == "MIT":
         return (
             "MIT License\n\n"
@@ -453,6 +459,7 @@ def _license_text(license_id: str, author_name: str, current_year: int) -> str:
             "SOFTWARE.\n"
         )
     if license_id == "Apache-2.0":
+        # Short appendix/notice form; full text: https://www.apache.org/licenses/LICENSE-2.0
         return (
             "Apache License\n"
             "Version 2.0, January 2004\n"
@@ -495,6 +502,7 @@ def _license_text(license_id: str, author_name: str, current_year: int) -> str:
             "OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n"
         )
     if license_id == "MPL-2.0":
+        # Short notice form; full text: https://www.mozilla.org/MPL/2.0/
         return (
             "Mozilla Public License Version 2.0\n\n"
             f"Copyright (c) {current_year} {author_name}\n\n"

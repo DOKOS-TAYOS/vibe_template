@@ -1,0 +1,27 @@
+# Notice
+
+This repository is a hand-maintained Python project template with an in-repo
+`bootstrap` command. It is not a Cookiecutter (or similar scaffolding) template.
+
+## Project license chosen at bootstrap
+
+The template itself ships under MIT (`LICENSE`). When you run bootstrap, you may
+keep MIT or select another supported SPDX id. Bootstrap writes a project
+`LICENSE` file for the chosen id.
+
+For some choices, bootstrap writes the full conventional license text (for
+example MIT and BSD-3-Clause). For Apache-2.0 and MPL-2.0, bootstrap writes the
+short copyright / notice form commonly used with those licenses, not the full
+license body. Use the official texts as the authoritative license terms:
+
+- Apache License 2.0:
+  https://www.apache.org/licenses/LICENSE-2.0
+  (also linked from the short form as http://www.apache.org/licenses/LICENSE-2.0)
+- Mozilla Public License 2.0:
+  https://www.mozilla.org/MPL/2.0/
+  (also linked from the short form as https://mozilla.org/MPL/2.0/)
+
+If your distribution policy requires a full copy of Apache-2.0 or MPL-2.0 in
+the repository, replace or supplement the generated `LICENSE` with the official
+full text from the URLs above (or distribute that full text alongside the short
+notice).
