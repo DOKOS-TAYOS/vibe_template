@@ -29,7 +29,7 @@ dev = [
     "pip-audit>=2.10.1",
     "pip-licenses>=5.5.5",
     "pyright>=1.1.409",
-    "pytest>=9.0.3",
+    "pytest>=9.1.1",
     "ruff>=0.15.13",
 ]
 
