@@ -2,13 +2,7 @@ name: CI
 
 on:
   push:
-    paths-ignore:
-      - "**/*.md"
-      - "docs/**"
   pull_request:
-    paths-ignore:
-      - "**/*.md"
-      - "docs/**"
 
 permissions:
   contents: read
@@ -115,3 +109,43 @@ jobs:
 
       - name: Fresh template bootstrap smoke
         run: python scripts/bootstrap_smoke.py --workspace-root "${{ runner.temp }}/template-smoke"
+
+  dependency-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Review dependency changes
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v5
+        with:
+          fail-on-severity: high
+
+      - name: Skip dependency review outside pull requests
+        if: github.event_name != 'pull_request'
+        run: echo "Dependency review applies only to pull requests."
+
+  required-pr-ci:
+    name: required-pr-ci
+    if: ${{ always() }}
+    needs: [test, template-smoke, dependency-review]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify required jobs
+        env:
+          TEST_RESULT: ${{ needs.test.result }}
+          TEMPLATE_SMOKE_RESULT: ${{ needs.template-smoke.result }}
+          DEPENDENCY_REVIEW_RESULT: ${{ needs.dependency-review.result }}
+        run: |
+          if [ "$TEST_RESULT" != "success" ] ||
+             [ "$TEMPLATE_SMOKE_RESULT" != "success" ] ||
+             [ "$DEPENDENCY_REVIEW_RESULT" != "success" ]; then
+            echo "test=$TEST_RESULT"
+            echo "template-smoke=$TEMPLATE_SMOKE_RESULT"
+            echo "dependency-review=$DEPENDENCY_REVIEW_RESULT"
+            exit 1
+          fi
